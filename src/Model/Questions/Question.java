@@ -19,7 +19,7 @@ public class Question {
     void setMyQuestionAndAnswer(final String theQuestionAndAnswer) {
         myQuestionAndAnswer = theQuestionAndAnswer;
     }
-    public static synchronized Question getMyQuestion() {
+    public static synchronized Question getInstance() {
         myQuestion = new Question();
         return myQuestion;
     }
