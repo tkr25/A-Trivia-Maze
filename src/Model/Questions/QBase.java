@@ -12,17 +12,26 @@ public class QBase {
     private Connection myConnect = null;
 
     private ResultSet resSet;
+    private boolean tableCreated = false;
 
-
-    public void createNewTable () throws ClassNotFoundException {
-
+    public QBase() throws SQLException {
         myQuestionSource = new SQLiteDataSource();
+        connectQuestDB();
+    }
+    public void createNewTable ()  {
+
+     //   myQuestionSource = new SQLiteDataSource();
+
+
         try {
-            //connection to DB
-            connectQuestDB();
+      //      //connection to DB
+     //       connectQuestDB();
             //create a table
-            QuestT();
-            AnswT();
+            if(!tableCreated) {
+                QuestT();
+                AnswT();
+                tableCreated = true;
+            }
             // Add data
             addQuestionAndAnswer("Are you ready kids?", "Aye-aye capitan");
             addQuestionAndAnswer("Who lives in the pineapple under the sea??", "Sponge Bob Square pants");
@@ -44,11 +53,19 @@ public class QBase {
         }
     }
 
-    private void closeDB () throws SQLException
+    void closeDB() throws SQLException
     {
-        myConnect.close();
 
-        resSet.close();
+        if (myConnect != null) {
+            myConnect.close();
+        }
+
+        if (resSet != null) {
+            resSet.close();
+        }
+//        myConnect.close();
+//
+//        resSet.close();
 
         System.out.println("Connections closed");
     }
@@ -104,7 +121,7 @@ public class QBase {
     }
 
 
-    private String getQuestId(int questionId) throws SQLException {
+     String getQuestId(int questionId) throws SQLException {
         // Get the question by its ID
         String query = "SELECT question FROM questions WHERE id = " + questionId;
         try (Statement stmt = myConnect.createStatement()) {
@@ -118,7 +135,7 @@ public class QBase {
         }
     }
 
-    private String getAnswId(int questionId) throws SQLException {
+    String getAnswId(int questionId) throws SQLException {
         // Get the answer for the question by its ID
         String query = "SELECT answer FROM answers WHERE question_id = "+ questionId;
         try (Statement stmt = myConnect.createStatement()) {
@@ -130,6 +147,26 @@ public class QBase {
                     return null;
                 }
             }
+        }
+    }
+
+    String getQuestion(int questionId) {
+        try {
+            String question = getQuestId(questionId);
+            return question;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return "Error getting question";
+        }
+    }
+
+     String getAnswer(int questionId) {
+        try {
+            String answer = getAnswId(questionId);
+            return answer;
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return "Error getting answer";
         }
     }
 }
