@@ -19,12 +19,12 @@ public class Question {
     private int randQ;
     public Question() throws SQLException {
 
-        final QBase questionsDB = new QBase();
-     //   questionsDB.createNewTable();
+         QBase questionsDB = new QBase();
+        //questionsDB.createNewTable();
 
         //1 to 50 number of question
-        randQ = myRand.nextInt(4-1) + 1;
-
+    //    randQ = myRand.nextInt(4-1) + 1;
+        randQ = 5;
         //get question from database randomly
         myQuestion = questionsDB.getQuestion(randQ);
         myAnswer = questionsDB.getAnswer(randQ);

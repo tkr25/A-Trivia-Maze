@@ -29,16 +29,29 @@ public class QBase {
       //      //connection to DB
      //       connectQuestDB();
             //create a table
+            QuestT();
+            AnswT();
+
+
             if(!tableCreated) {
-                QuestT();
-                AnswT();
+           //     QuestT();
+                // Add data
+
+                addQuestionAndAnswer("Are you ready kids?", "Aye-aye capitan");
+                addQuestionAndAnswer("Who lives in the pineapple under the sea??", "Sponge Bob Square pants");
+                addQuestionAndAnswer("Who lives in the pineapple under the sea?? Sponge Bob, Patrick, Sandy", "Sponge Bob ");
+                addQuestionAndAnswer("If you happy and you know it clap your .... Hands, Ears, Feet.", "Hands");
+                addQuestionAndAnswer("Quest5", "5");
+
+
+           //     AnswT();
                 tableCreated = true;
             }
-            // Add data
-            addQuestionAndAnswer("If you happy and you know it clap your .... Hands, Ears, Feet.", "Hands");
-            addQuestionAndAnswer("Are you ready kids?", "Aye-aye capitan");
-            addQuestionAndAnswer("Who lives in the pineapple under the sea??", "Sponge Bob Square pants");
-            addQuestionAndAnswer("Who lives in the pineapple under the sea?? Sponge Bob, Patrick, Sandy", "Sponge Bob ");
+//            // Add data
+//            addQuestionAndAnswer("If you happy and you know it clap your .... Hands, Ears, Feet.", "Hands");
+//            addQuestionAndAnswer("Are you ready kids?", "Aye-aye capitan");
+//            addQuestionAndAnswer("Who lives in the pineapple under the sea??", "Sponge Bob Square pants");
+//            addQuestionAndAnswer("Who lives in the pineapple under the sea?? Sponge Bob, Patrick, Sandy", "Sponge Bob ");
 
 //            // Get a question and matching answer
 //            int questId =2;
@@ -49,7 +62,7 @@ public class QBase {
 //            System.out.println("A: " + answer);
 
             // Close the connection
-            closeDB();
+//            closeDB();
 
         } catch (SQLException e) {
             System.err.println("Database error: " + e.getMessage());
@@ -75,7 +88,9 @@ public class QBase {
 
 
     private void connectQuestDB () throws SQLException {
-        myQuestionSource.setUrl("jdbc:sqlite:A-Trivia_Maze.db");
+      //  myQuestionSource.setUrl("jdbc:sqlite:A-Trivia_Maze.db");
+      //  myQuestionSource.setUrl("jdbc:sqlite:New.db");
+        myQuestionSource.setUrl("jdbc:sqlite:New1.db");
         // Open a connection to the database
         myConnect = myQuestionSource.getConnection();
     }
@@ -105,7 +120,7 @@ public class QBase {
         }
     }
 
-    private void addQuestionAndAnswer (String question, String answer) throws SQLException {
+    void addQuestionAndAnswer(String question, String answer) throws SQLException {
         // Insert the question
         String query1 = "INSERT INTO questions (question) VALUES ('" + question + "')";
         Statement stmt1 = myConnect.createStatement();
@@ -172,6 +187,16 @@ public class QBase {
             return "Error getting answer";
         }
     }
+
+//        public static void main(String[] args) {
+//            try {
+//                QBase questionBase = new QBase();
+//                questionBase.createNewTable();
+//            } catch (SQLException e) {
+//                e.printStackTrace();
+//            }
+//        }
+
 }
 
 
