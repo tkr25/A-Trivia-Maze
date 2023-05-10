@@ -14,6 +14,8 @@ public class QBase {
     private ResultSet resSet;
     private boolean tableCreated = false;
 
+
+    //constructor
     public QBase() throws SQLException {
         myQuestionSource = new SQLiteDataSource();
         connectQuestDB();
@@ -33,17 +35,18 @@ public class QBase {
                 tableCreated = true;
             }
             // Add data
+            addQuestionAndAnswer("If you happy and you know it clap your .... Hands, Ears, Feet.", "Hands");
             addQuestionAndAnswer("Are you ready kids?", "Aye-aye capitan");
             addQuestionAndAnswer("Who lives in the pineapple under the sea??", "Sponge Bob Square pants");
+            addQuestionAndAnswer("Who lives in the pineapple under the sea?? Sponge Bob, Patrick, Sandy", "Sponge Bob ");
 
-
-            // Get a question and matching answer
-            int questId =2;
-
-            String question = getQuestId(questId);
-            String answer = getAnswId(questId);
-            System.out.println("Q: " + question);
-            System.out.println("A: " + answer);
+//            // Get a question and matching answer
+//            int questId =2;
+//
+//            String question = getQuestId(questId);
+//            String answer = getAnswId(questId);
+//            System.out.println("Q: " + question);
+//            System.out.println("A: " + answer);
 
             // Close the connection
             closeDB();
