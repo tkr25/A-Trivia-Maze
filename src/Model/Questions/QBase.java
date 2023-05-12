@@ -37,15 +37,20 @@ public class QBase {
            //     QuestT();
                 // Add data
 
-                addQuestionAndAnswer("Are you ready kids?", "Aye-aye capitan");
-                addQuestionAndAnswer("Who lives in the pineapple under the sea??", "Sponge Bob Square pants");
-                addQuestionAndAnswer("Who lives in the pineapple under the sea?? Sponge Bob, Patrick, Sandy", "Sponge Bob ");
-                addQuestionAndAnswer("If you happy and you know it clap your .... Hands, Ears, Feet.", "Hands");
+             //   addQuestionAndAnswer("Are you ready kids?", "Aye-aye capitan");
+            //    addQuestionAndAnswer("Who lives in the pineapple under the sea??", "Sponge Bob Square pants");
+             //   addQuestionAndAnswer("Who lives in the pineapple under the sea?? Sponge Bob, Patrick, Sandy", "Sponge Bob ");
+             //   addQuestionAndAnswer("If you happy and you know it clap your .... Hands, Ears, Feet.", "Hands");
+                addQuestionAndAnswer("Quest1", "1");
+                addQuestionAndAnswer("Quest2", "2");
+                addQuestionAndAnswer("Quest3", "3");
+                addQuestionAndAnswer("Quest4", "4");
                 addQuestionAndAnswer("Quest5", "5");
+                addQuestionAndAnswer("Quest6", "6");
 
 
            //     AnswT();
-                tableCreated = true;
+               tableCreated = true;
             }
 //            // Add data
 //            addQuestionAndAnswer("If you happy and you know it clap your .... Hands, Ears, Feet.", "Hands");
@@ -89,8 +94,9 @@ public class QBase {
 
     private void connectQuestDB () throws SQLException {
       //  myQuestionSource.setUrl("jdbc:sqlite:A-Trivia_Maze.db");
-      //  myQuestionSource.setUrl("jdbc:sqlite:New.db");
-        myQuestionSource.setUrl("jdbc:sqlite:New1.db");
+        myQuestionSource.setUrl("jdbc:sqlite:New.db");
+      //  myQuestionSource.setUrl("jdbc:sqlite:New1.db");
+      //  myQuestionSource.setUrl("jdbc:sqlite:TRY.db");
         // Open a connection to the database
         myConnect = myQuestionSource.getConnection();
     }

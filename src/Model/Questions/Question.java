@@ -20,11 +20,11 @@ public class Question {
     public Question() throws SQLException {
 
          QBase questionsDB = new QBase();
-        //questionsDB.createNewTable();
+     //   questionsDB.createNewTable();
 
         //1 to 50 number of question
-    //    randQ = myRand.nextInt(4-1) + 1;
-        randQ = 5;
+        randQ = myRand.nextInt(6-1) + 1;
+    //    randQ = 5;
         //get question from database randomly
         myQuestion = questionsDB.getQuestion(randQ);
         myAnswer = questionsDB.getAnswer(randQ);
@@ -38,13 +38,7 @@ public class Question {
 //        }
     }
 
-//    void setMyQuestionAndAnswer(final String theQuestionAndAnswer) {
-//        myQuestionAndAnswer = theQuestionAndAnswer;
-//    }
-//    public static synchronized Question getInstance() {
-//        myQuestion = new Question();
-//        return myQuestion;
-//    }
+
 
     public String getQuestion()
     {
