@@ -9,11 +9,14 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.Background;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
+import javafx.stage.Popup;
 import javafx.stage.Stage;
 
 import java.awt.*;
@@ -33,8 +36,8 @@ public class BuildFrame extends Application implements EventHandler<ActionEvent>
     Color baseColor = new Color(173.0/255, 165.0/255, 191.0/255, 1);
     Stage myStage;
     ImageView rainImage = new ImageView(new Image("file:83196.jpg"));
-    Image maze = new Image("file:maze.jpg");
-    ImageView mazeImage = new ImageView();
+    Image brick = new Image("file:brick.jpg");
+    ImageView brickImage = new ImageView();
     public static void main(String[] args) {
         launch(args);
     }
@@ -67,11 +70,11 @@ public class BuildFrame extends Application implements EventHandler<ActionEvent>
         aboutButton = new Button("ABOUT");
         loadButton = new Button("LOAD GAME");
         themeButton = new Button("THEME");
-        buttonMaker(startButton, new Point(300, 350), new Point(2,2));
-        buttonMaker(loadButton, new Point(300, 425), new Point(2,2));
-        buttonMaker(aboutButton, new Point(150, 500), new Point(2,2));
-        buttonMaker(DifficultyButton, new Point(300, 500), new Point(2, 2));
-        buttonMaker(themeButton, new Point(475, 500), new Point(2,2));
+        buttonMaker(startButton, new Point(300, 350));
+        buttonMaker(loadButton, new Point(300, 425));
+        buttonMaker(aboutButton, new Point(150, 500));
+        buttonMaker(DifficultyButton, new Point(300, 500));
+        buttonMaker(themeButton, new Point(475, 500));
         Group root = new Group();
         root.getChildren().addAll(rainImage, DifficultyButton, startButton,
                 loadButton, themeButton, aboutButton, title);
@@ -80,26 +83,75 @@ public class BuildFrame extends Application implements EventHandler<ActionEvent>
         myStage.setScene(scene);
     }
 
+    private void buildGamePlay() {
+
+    }
+
     private void startGame() {
+        // Create frame for gameplay
         Group root = new Group();
-        ImageView doorA = doorMaker(new Point(400, 100));
+
+        // Create the 3 doors
+        Group doors = new Group();
+        Polygon doorA = new Polygon(400, 100, 400, 250, 500, 250, 500, 100);
+        doorA.setFill(new ImagePattern(new Image("file:doorA.jpg")));
+        Button doorAButton = new Button("A");
+        doorAButton.setPrefSize(100,150);
+        doorAButton.setStyle("-fx-background-color: rgba(0, 0, 0, 0)");
+        doorAButton.setLayoutX(400);
+        doorAButton.setLayoutY(100);
+        doorAButton.setOnAction(this);
         ImageView doorB = doorMaker(new Point(100, 300));
         ImageView doorC = doorMaker(new Point(700, 300));
-        Polygon wallA = new Polygon(0,0, 0, 500, 300, 200, 300, 0);
-        wallA.setFill(baseColor.brighter());
+        doors.getChildren().addAll(doorA,doorB,doorC,doorAButton);
+
+        // Create Walls
+        Polygon wallA = new Polygon(0 ,0, 0, 500, 300, 200, 300, 0);
+        wallA.setFill(new ImagePattern(new Image("file:sideBrick.jpg"), 0, 0, 1.7, 1, true));
         Rectangle wallB = new Rectangle(250, 0,400,250);
-        wallB.setFill(baseColor);
+        wallB.setFill(new ImagePattern(brick, -.1, 0, 310, 155, false));
         Polygon wallC = new Polygon(600,0, 900, 0, 900, 500, 600, 200);
         wallC.setFill(baseColor.brighter());
+        wallC.setFill(new ImagePattern(new Image("file:sideBrick.jpg"), -0.8, -0.1, 1.7, 1, true));
 
-        Rectangle bottom = new Rectangle(0, 500,400,400);
+        // Create Floor
+        Rectangle floor = new Rectangle(0,0,750, 500);
+        floor.setFill(new ImagePattern( new Image("file:floor.jpg"), 0,0,0,0,true));
+
+        // Create button panel
+        Group buttonPanel = new Group();
+        Rectangle bottom = new Rectangle(0, 500,300,300);
         bottom.setFill(Color.TAN);
+        Button rulesButton = new Button("RULES");
+        Button saveButton = new Button("SAVE");
+        Button shortcutButton = new Button("SHORTCUTS");
+        buttonMaker(saveButton, new Point(125, 530));
+        buttonMaker(rulesButton, new Point(125, 600));
+        buttonMaker(shortcutButton, new Point(110, 670));
+        buttonPanel.getChildren().addAll(bottom, shortcutButton, rulesButton, saveButton);
 
-        root.getChildren().addAll(wallA, wallC, wallB, doorA, doorB, doorC, bottom);
+        // Create grid
+        Group grid = new Group();
+        Rectangle base = new Rectangle(500, 450, 250, 250);
+        base.setFill(Color.WHITE);
+        Line line = new Line(500,450, 500, 800);
+        grid.getChildren().add(base);
+        for (int i = 500; i <= 750; i+=50) {
+            grid.getChildren().add(new Line(i, 450, i, 700));
+            grid.getChildren().add(new Line(500, i - 50, 750, i - 50));
+        }
 
-        Scene scene = new Scene(root, 900, 900, Color.WHITE);
+
+        root.getChildren().addAll(floor, wallA, wallC, wallB, doors,  buttonPanel, grid);
+
+        Scene scene = new Scene(root, 800, 750);
         myStage.setScene(scene);
     }
+
+//    private void about() {
+//        Popup pop = PopupBuilder.create().width(50).height(100).autoFix(true).build();
+//        pop.show(myStage);
+//    }
 
     private ImageView doorMaker(Point theCoordinates) {
         ImageView door = new ImageView(new Image("file:door.jpg"));
@@ -109,18 +161,24 @@ public class BuildFrame extends Application implements EventHandler<ActionEvent>
         door.setLayoutY(theCoordinates.y);
         return door;
     }
-    private void buttonMaker(Button theButton, Point theCoordinate, Point theScale) {
+    private void buttonMaker(Button theButton, Point theCoordinate) {
+        buttonMaker(theButton,theCoordinate, new Point(2,2), false);
+    }
+    private void buttonMaker(Button theButton, Point theCoordinate, Point theScale, boolean theBlendIn) {
         theButton.setOnAction(this);
         theButton.setLayoutX(theCoordinate.x);
         theButton.setLayoutY(theCoordinate.y);
-        theButton.setScaleX(theScale.x);
-        theButton.setScaleY(theScale.y);
-        //startButton.setStyle("-fx-background-color: rgba(84, 72, 113, 0.46)");
+        theButton.setScaleX(2);
+        theButton.setScaleY(2);
+        if (theBlendIn) {
+            theButton.setStyle("-fx-background-color: rgba(84, 72, 113, 0.46)");
+        }
     }
     @Override
     public void handle(ActionEvent actionEvent) {
         if (actionEvent.getSource() == startButton) {
             startGame();
+
         }
     }
 }
