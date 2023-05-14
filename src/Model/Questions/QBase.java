@@ -22,25 +22,18 @@ public class QBase {
     }
     public void createNewTable ()  {
 
-     //   myQuestionSource = new SQLiteDataSource();
+
 
 
         try {
-      //      //connection to DB
-     //       connectQuestDB();
+
             //create a table
             QuestT();
             AnswT();
 
 
             if(!tableCreated) {
-           //     QuestT();
-                // Add data
 
-             //   addQuestionAndAnswer("Are you ready kids?", "Aye-aye capitan");
-            //    addQuestionAndAnswer("Who lives in the pineapple under the sea??", "Sponge Bob Square pants");
-             //   addQuestionAndAnswer("Who lives in the pineapple under the sea?? Sponge Bob, Patrick, Sandy", "Sponge Bob ");
-             //   addQuestionAndAnswer("If you happy and you know it clap your .... Hands, Ears, Feet.", "Hands");
                 addQuestionAndAnswer("Quest1", "1");
                 addQuestionAndAnswer("Quest2", "2");
                 addQuestionAndAnswer("Quest3", "3");
@@ -49,25 +42,10 @@ public class QBase {
                 addQuestionAndAnswer("Quest6", "6");
 
 
-           //     AnswT();
+
                tableCreated = true;
             }
-//            // Add data
-//            addQuestionAndAnswer("If you happy and you know it clap your .... Hands, Ears, Feet.", "Hands");
-//            addQuestionAndAnswer("Are you ready kids?", "Aye-aye capitan");
-//            addQuestionAndAnswer("Who lives in the pineapple under the sea??", "Sponge Bob Square pants");
-//            addQuestionAndAnswer("Who lives in the pineapple under the sea?? Sponge Bob, Patrick, Sandy", "Sponge Bob ");
 
-//            // Get a question and matching answer
-//            int questId =2;
-//
-//            String question = getQuestId(questId);
-//            String answer = getAnswId(questId);
-//            System.out.println("Q: " + question);
-//            System.out.println("A: " + answer);
-
-            // Close the connection
-//            closeDB();
 
         } catch (SQLException e) {
             System.err.println("Database error: " + e.getMessage());
@@ -84,19 +62,17 @@ public class QBase {
         if (resSet != null) {
             resSet.close();
         }
-//        myConnect.close();
-//
-//        resSet.close();
+
 
         System.out.println("Connections closed");
     }
 
 
     private void connectQuestDB () throws SQLException {
-      //  myQuestionSource.setUrl("jdbc:sqlite:A-Trivia_Maze.db");
+        //  myQuestionSource.setUrl("jdbc:sqlite:A-Trivia_Maze.db");
         myQuestionSource.setUrl("jdbc:sqlite:New.db");
-      //  myQuestionSource.setUrl("jdbc:sqlite:New1.db");
-      //  myQuestionSource.setUrl("jdbc:sqlite:TRY.db");
+        //  myQuestionSource.setUrl("jdbc:sqlite:New1.db");
+        //  myQuestionSource.setUrl("jdbc:sqlite:TRY.db");
         // Open a connection to the database
         myConnect = myQuestionSource.getConnection();
     }
@@ -194,6 +170,7 @@ public class QBase {
         }
     }
 
+//       main method used to fill the database with questions
 //        public static void main(String[] args) {
 //            try {
 //                QBase questionBase = new QBase();

@@ -16,15 +16,15 @@ public class Question {
   //  private String myQuestionAndAnswer;
     protected Random myRand = new Random();
 
-    private int randQ;
+    private final int randQ;
     public Question() throws SQLException {
 
          QBase questionsDB = new QBase();
-     //   questionsDB.createNewTable();
+        //   questionsDB.createNewTable();
 
-        //1 to 50 number of question
+        //1 to ... number of question
         randQ = myRand.nextInt(6-1) + 1;
-    //    randQ = 5;
+
         //get question from database randomly
         myQuestion = questionsDB.getQuestion(randQ);
         myAnswer = questionsDB.getAnswer(randQ);
@@ -83,37 +83,40 @@ public class Question {
 
 
 
-    public static void main(String[] args) throws SQLException {
 
-
-        boolean myGameOverWin = false;
-        int winTimes = 0;
-
-
-        Scanner scanner = new Scanner(System.in);
-        boolean playAgain = true;
-
-        while (playAgain) {
-            Question question = new Question();
-            System.out.println(question);
-
-            String answer = scanner.nextLine();
-
-            if (question.checkIfCorrect(answer)) {
-                System.out.println("Correct!");
-            } else {
-                System.out.println("Incorrect.");
-            }
-
-            System.out.println("Play again? (y/n)");
-            String playAgainAnswer = scanner.nextLine();
-
-            if (playAgainAnswer.toLowerCase().equals("n")) {
-                playAgain = false;
-            }
-        }
-
-        System.out.println("GAME OVER");
-    }
+    // temporary main method to check if question class and DB works properly,
+    //comment out or remove later
+//    public static void main(String[] args) throws SQLException {
+//
+//
+//        boolean myGameOverWin = false;
+//        int winTimes = 0;
+//
+//
+//        Scanner scanner = new Scanner(System.in);
+//        boolean playAgain = true;
+//
+//        while (playAgain) {
+//            Question question = new Question();
+//            System.out.println(question);
+//
+//            String answer = scanner.nextLine();
+//
+//            if (question.checkIfCorrect(answer)) {
+//                System.out.println("Correct!");
+//            } else {
+//                System.out.println("Incorrect.");
+//            }
+//
+//            System.out.println("Play again? (y/n)");
+//            String playAgainAnswer = scanner.nextLine();
+//
+//            if (playAgainAnswer.toLowerCase().equals("n")) {
+//                playAgain = false;
+//            }
+//        }
+//
+//        System.out.println("GAME OVER");
+//    }
 }
-//}
+
