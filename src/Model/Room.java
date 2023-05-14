@@ -1,14 +1,11 @@
 package Model;
 
-import Model.Questions.Question;
-
-import java.sql.SQLException;
 
 public class Room{
     private boolean myLock;
     private boolean myVisited;
-    private Question myQuestion;
-    Room() throws SQLException {
+
+      Room()  {
         myLock = false;
         myVisited = false;
 
@@ -34,7 +31,8 @@ public class Room{
 
 
     //the string representation of room
-        public String roomToString() {
+    @Override
+        public String toString() {
         final StringBuilder strb = new StringBuilder();
         strb.append("Room is ");
         if (myLock) {
