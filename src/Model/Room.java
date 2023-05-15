@@ -1,7 +1,9 @@
 package Model;
 
 
-public class Room{
+import Model.Questions.QBase;
+
+public class Room extends QBase {
     private boolean myLock;
     private boolean myVisited;
 

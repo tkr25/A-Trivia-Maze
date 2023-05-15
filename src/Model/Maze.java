@@ -1,6 +1,6 @@
 package Model;
 
-public class Maze {
+public class Maze extends Room{
     private Room[][] myMaze;
     private int myRow;
     private int myCol;
