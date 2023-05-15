@@ -1,5 +1,6 @@
 package GUI;
 
+
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -9,15 +10,14 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.layout.Background;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
-import javafx.stage.Popup;
 import javafx.stage.Stage;
+
 
 import java.awt.*;
 
@@ -26,6 +26,13 @@ public class BuildFrame extends Application implements EventHandler<ActionEvent>
 
     Button startButton;
 
+    Button doorAButton;
+
+    Button doorBButton;
+
+    Button doorCButton;
+
+    Button doorDButton;
     Button DifficultyButton;
 
     Button themeButton;
@@ -34,10 +41,15 @@ public class BuildFrame extends Application implements EventHandler<ActionEvent>
 
     Button loadButton; //rgba(173, 165, 191, 1)
     Color baseColor = new Color(173.0/255, 165.0/255, 191.0/255, 1);
+
+    Circle me;
+
+    Point myDirection;
+    Group gameFrame;
+    Position myPosition;
     Stage myStage;
     ImageView rainImage = new ImageView(new Image("file:83196.jpg"));
     Image brick = new Image("file:brick.jpg");
-    ImageView brickImage = new ImageView();
     public static void main(String[] args) {
         launch(args);
     }
@@ -83,34 +95,63 @@ public class BuildFrame extends Application implements EventHandler<ActionEvent>
         myStage.setScene(scene);
     }
 
-    private void buildGamePlay() {
+    private void buildGameDisplay() {
 
     }
 
     private void startGame() {
+        myDirection = Position.LEFT;
+        myPosition = new Position();
+
+        // Create you are here marker
+        me = new Circle(10);
+        me.setLayoutX(475);
+        me.setLayoutY(475);
+
         // Create frame for gameplay
-        Group root = new Group();
+        gameFrame = new Group();
 
         // Create the 3 doors
         Group doors = new Group();
-        Polygon doorA = new Polygon(400, 100, 400, 250, 500, 250, 500, 100);
+        Polygon doorA = new Polygon(250, 100, 250, 250, 350, 250, 350, 100);
         doorA.setFill(new ImagePattern(new Image("file:doorA.jpg")));
-        Button doorAButton = new Button("A");
+
+        doorAButton = new Button("A");
         doorAButton.setPrefSize(100,150);
-        doorAButton.setStyle("-fx-background-color: rgba(0, 0, 0, 0)");
-        doorAButton.setLayoutX(400);
-        doorAButton.setLayoutY(100);
+        //doorAButton.setStyle("-fx-background-color: rgba(0, 0, 0, 0)");
+        doorAButton.setLayoutX(50);
+        doorAButton.setLayoutY(150);
         doorAButton.setOnAction(this);
-        ImageView doorB = doorMaker(new Point(100, 300));
-        ImageView doorC = doorMaker(new Point(700, 300));
-        doors.getChildren().addAll(doorA,doorB,doorC,doorAButton);
+
+        doorBButton = new Button("B");
+        doorBButton.setPrefSize(100,150);
+        doorBButton.setStyle("-fx-background-color: rgba(0, 0, 0, 0)");
+        doorBButton.setLayoutX(250); //50
+        doorBButton.setLayoutY(100); //150
+        doorBButton.setOnAction(this);
+
+        doorCButton = new Button("C");
+        doorCButton.setPrefSize(100,150);
+        //doorCButton.setStyle("-fx-background-color: rgba(0, 0, 0, 0)");
+        doorCButton.setLayoutX(500);
+        doorCButton.setLayoutY(150);
+        doorCButton.setOnAction(this);
+
+        doorDButton = new Button("D");
+        doorDButton.setPrefSize(50,50);
+        //doorDButton.setStyle("-fx-background-color: rgba(1, 10, 50, 0)");
+        doorDButton.setLayoutX(350);
+        doorDButton.setLayoutY(550);
+        doorDButton.setOnAction(this);
+
+        doors.getChildren().addAll(doorA,doorBButton,doorCButton,doorAButton, doorDButton);
 
         // Create Walls
-        Polygon wallA = new Polygon(0 ,0, 0, 500, 300, 200, 300, 0);
+        Polygon wallA = new Polygon(0 ,0, 0, 500, 200, 200, 200, 0);
         wallA.setFill(new ImagePattern(new Image("file:sideBrick.jpg"), 0, 0, 1.7, 1, true));
-        Rectangle wallB = new Rectangle(250, 0,400,250);
-        wallB.setFill(new ImagePattern(brick, -.1, 0, 310, 155, false));
-        Polygon wallC = new Polygon(600,0, 900, 0, 900, 500, 600, 200);
+        Rectangle wallB = new Rectangle(168, 0,364,250);
+        wallB.setFill(new ImagePattern(brick, -.1, 0, 100, 80, false));
+        Polygon wallC = new Polygon(532,0, 700, 0, 700, 500, 532, 250);
         wallC.setFill(baseColor.brighter());
         wallC.setFill(new ImagePattern(new Image("file:sideBrick.jpg"), -0.8, -0.1, 1.7, 1, true));
 
@@ -132,19 +173,18 @@ public class BuildFrame extends Application implements EventHandler<ActionEvent>
 
         // Create grid
         Group grid = new Group();
-        Rectangle base = new Rectangle(500, 450, 250, 250);
+        Rectangle base = new Rectangle(450, 450, 250, 250);
         base.setFill(Color.WHITE);
         Line line = new Line(500,450, 500, 800);
         grid.getChildren().add(base);
-        for (int i = 500; i <= 750; i+=50) {
+        for (int i = 450; i <= 700; i+=50) {
             grid.getChildren().add(new Line(i, 450, i, 700));
-            grid.getChildren().add(new Line(500, i - 50, 750, i - 50));
+            grid.getChildren().add(new Line(450, i, 700, i));
         }
 
+        gameFrame.getChildren().addAll(floor, wallA, wallC, wallB,  buttonPanel, grid, doors, me);
 
-        root.getChildren().addAll(floor, wallA, wallC, wallB, doors,  buttonPanel, grid);
-
-        Scene scene = new Scene(root, 800, 750);
+        Scene scene = new Scene(gameFrame, 800, 750);
         myStage.setScene(scene);
     }
 
@@ -153,13 +193,11 @@ public class BuildFrame extends Application implements EventHandler<ActionEvent>
 //        pop.show(myStage);
 //    }
 
-    private ImageView doorMaker(Point theCoordinates) {
-        ImageView door = new ImageView(new Image("file:door.jpg"));
-        door.setFitWidth(100);
-        door.setFitHeight(150);
-        door.setLayoutX(theCoordinates.x);
-        door.setLayoutY(theCoordinates.y);
-        return door;
+    private void changePositions(Point theChange) {
+        myPosition.changePositions(theChange);
+        me.setLayoutX(myPosition.myPosition.x);
+        me.setLayoutY(myPosition.myPosition.y);
+        myStage.setScene(new Scene(new Group(gameFrame)));
     }
     private void buttonMaker(Button theButton, Point theCoordinate) {
         buttonMaker(theButton,theCoordinate, new Point(2,2), false);
@@ -176,23 +214,17 @@ public class BuildFrame extends Application implements EventHandler<ActionEvent>
     }
     @Override
     public void handle(ActionEvent actionEvent) {
-        if (actionEvent.getSource() == startButton) {
+        Object source = actionEvent.getSource();
+        if (source == startButton) {
             startGame();
-
+        } else if (source == doorAButton) {
+            changePositions(Position.LEFT);
+        } else if (source == doorBButton) {
+            changePositions(Position.UP);
+        } else if (source == doorCButton) {
+            changePositions(Position.RIGHT);
+        } else if (source == doorDButton) {
+            changePositions(Position.DOWN);
         }
     }
 }
-//    Polygon p = new Polygon();
-//
-//        p.setLayoutX(10);
-//                p.setLayoutY(10);
-//                p.getPoints().add(0.0); // Point A: x coordinate
-//                p.getPoints().add(0.0); // Point A: y coordinate
-//                p.getPoints().add(300.0); // Point B: x coordinate
-//                p.getPoints().add(0.0); // Point B: y coordinate
-//                p.getPoints().add(300.0);  // Point C: x coordinate
-//                p.getPoints().add(300.0);// Point C: y
-//                p.getPoints().add(0.0);
-//                p.getPoints().add(300.0);
-//
-//                p.setFill(new ImagePattern(maze, 0, 0, 150, 50, false));
