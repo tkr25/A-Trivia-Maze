@@ -1,6 +1,9 @@
 package Model;
 
-public class Maze {
+import java.io.Serializable;
+
+public class Maze extends Room implements Serializable{
+    private static final long serialVersionUID = -6432147852365214569L;
     private Room[][] myMaze;
     private int myRow;
     private int myCol;
