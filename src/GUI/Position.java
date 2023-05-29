@@ -11,12 +11,11 @@ public class Position {
     Point myPosition;
 
     Position() {
-        myPosition = new Point (475, 475);
+        myPosition = new Point (365, 465);
     }
 
-    public Point changePositions(Point theDirection) {
+    public void changePositions(Point theDirection) {
         myPosition.x += theDirection.x;
         myPosition.y += theDirection.y;
-        return myPosition;
     }
 }
