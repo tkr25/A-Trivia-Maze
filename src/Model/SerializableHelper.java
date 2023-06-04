@@ -1,15 +1,13 @@
-package Controller;
-
-import Model.Maze;
+package Model;
 
 import java.io.*;
 //https://www.digitalocean.com/community/tutorials/serialization-in-java
 
 public class SerializableHelper {
     // deserialize to Object from given file
-    public static Object deserialize(String fileName) throws IOException,
+    public static Object deserialize(final String theFileName) throws IOException,
             ClassNotFoundException {
-        FileInputStream fis = new FileInputStream(fileName);
+        FileInputStream fis = new FileInputStream(theFileName);
         ObjectInputStream ois = new ObjectInputStream(fis);
         Object obj = ois.readObject();
         ois.close();
@@ -17,12 +15,11 @@ public class SerializableHelper {
     }
 
     // serialize the given object and save it to file
-    public static void serialize(Object obj, String fileName)
+    public static void serialize(final Object theObj, final  String theFileName)
             throws IOException {
-        FileOutputStream fos = new FileOutputStream(fileName);
+        FileOutputStream fos = new FileOutputStream(theFileName);
         ObjectOutputStream oos = new ObjectOutputStream(fos);
-        oos.writeObject(obj);
-
+        oos.writeObject(theObj);
         fos.close();
     }
     public static void serializeToFile(final Maze theMaze, final String theFileName) {
@@ -33,15 +30,14 @@ public class SerializableHelper {
             return;
         }
     }
-    public static void deserializeFromFile(final String theFileName) {
-
+    public static Maze deserializeFromFile(final String theFileName) {
         Maze savedMaze = null;
         try {
             savedMaze = (Maze) deserialize(theFileName);
         } catch (ClassNotFoundException | IOException e) {
             e.printStackTrace();
         }
+        return savedMaze;
     }
-
 }
 

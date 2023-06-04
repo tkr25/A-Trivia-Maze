@@ -1,61 +1,127 @@
 package Model;
 
+import java.io.Serial;
 import java.io.Serializable;
 
-public class Maze extends Room implements Serializable{
+public class Maze implements Serializable{
+    @Serial
     private static final long serialVersionUID = -6432147852365214569L;
-    private Room[][] myMaze;
-    private int myRow;
-    private int myCol;
-    private boolean canWin;
-    private final int MIN_SIZE = 4;
-    private final int RIGHT = 0;
-    private final int DOWN = 1;
-    private final  int LEFT = 2;
-    private final int UP = 3;
-    Maze() {
-        myCol = 0;
-        myRow = 0;
-        canWin = true;
-        makeMaze(MIN_SIZE);
+    private Door[][] myDoors; // 2D array to store the doors in the maze
+    private static final int SIZE = 5;
+    private int myPosRow; //  current row position
+    private int myPosCol; // current column position
+
+    Maze() throws Exception {
+        myPosCol = 0;
+        myPosRow = 0;
+        makeMaze();
     }
-    private void makeMaze(final int theSize) {
-        myMaze = new Room[theSize][theSize];
-        for (int i = 0; i < myMaze.length; i++) {
-            for (int j = 0; j < myMaze[0].length; j++) {
-                myMaze[i][j] = new Room();
+    private void makeMaze() throws Exception {
+        myDoors = new Door[SIZE][SIZE]; // 5x5 array of doors
+        for (int row = 0; row < SIZE; row++) {
+            for (int col = 0; col < SIZE; col++) {
+                if (row == 0 && col == 0 || row == SIZE  - 1 && col == SIZE - 1) {
+                    myDoors[row][col] = new Door();
+                    myDoors[row][col].setDoorState(1);// entrance and exit doors to open
+                } else {
+                    myDoors[row][col] = new Door(); // new Door object for other positions
+                }
+            }
+        }
+        myPosRow = 0; // Set initial player row position
+        myPosCol = 0; // Set initial player column position
+    }
+    public boolean validateSelection(final int theRow, final int theCol) {
+        return ((theRow >= 0 && theCol >= 0) &&
+                (theCol <= SIZE - 1 && theRow <= SIZE - 1)) &&
+                myDoors[theRow][theCol].getDoorState() < 2;
+    }
+
+    public boolean canMove(final int theDir) {
+        boolean result  = false;
+        if (theDir == Direction.RIGHT.getMyDirectionNumber()) {
+            result = validateSelection(myPosRow, moveRight());
+        } else if(theDir == Direction.DOWN.getMyDirectionNumber()) {
+            result = validateSelection(moveDown(), myPosCol);
+        } else if(theDir == Direction.LEFT.getMyDirectionNumber()) {
+            result = validateSelection(myPosRow, moveLeft());
+        } else if(theDir == Direction.UP.getMyDirectionNumber()) {
+            result = validateSelection(moveUp(), myPosCol);
+        }
+        return result;
+
+    }
+    private int moveRight() {
+        return myPosCol + 1;
+    }
+    private int moveLeft() {
+        return myPosCol - 1;
+    }
+    int moveDown() {
+        return myPosRow + 1;
+    }
+    int moveUp() {
+        return myPosRow - 1;
+    }
+    public void movePosition(final int theDir) {
+        if (canMove(theDir)) {
+            if (theDir == Direction.RIGHT.getMyDirectionNumber()) {
+                setMyCol(moveRight());
+            } else if (theDir == Direction.DOWN.getMyDirectionNumber()) {
+                setMyRow(moveDown());
+            } else if (theDir == Direction.LEFT.getMyDirectionNumber()) {
+                setMyCol(moveLeft());
+            } else if (theDir == Direction.UP.getMyDirectionNumber()) {
+                setMyRow(moveUp());
+            } else {
+                System.out.println("Shouldn't have got here.");
+                System.exit(0);
             }
         }
     }
-    private void move(final int theDir) {
-        if (theDir == RIGHT) {
-            setMyRow(myRow + 1);
-        } else if(theDir == DOWN) {
-            setMyCol(myCol + 1);
-        } else if(theDir == LEFT) {
-            setMyRow(myRow - 1);
-        } else if(theDir == UP) {
-            setMyCol(myCol - 1);
-        } else {
-            System.out.println("Shouldn't have got here.");
+    public static boolean atFinish(final int theRow, final int theCol) {
+        return theRow == SIZE - 1 && theCol == SIZE - 1;
+    }
+    public static boolean canFinishMaze(final Maze theMaze, final int theRow, final int theCol) {
+        boolean success = false;
+        if (theMaze.validateSelection(theRow, theCol)) {
+            markVisited(theMaze, theRow, theCol); //drop a bread crumb to track we've been here
+            if (atFinish(theRow, theCol)) {
+                return true;
+            }
+            //not at exit so need to try other directions
+            success = canFinishMaze(theMaze, theMaze.moveDown(), theCol); //down
+            if (!success) {
+                success = canFinishMaze(theMaze, theRow, theMaze.moveRight()); //right
+            }
+            if(!success) {
+                success = canFinishMaze(theMaze, theMaze.moveUp(), theCol); //up
+            }
+            if(!success) {
+                success = canFinishMaze(theMaze, theRow, theMaze.moveLeft()); //left
+            }
         }
+        return success;
     }
-    private void setCanWin() {
-
+    private static void markVisited(final Maze theMaze, final int theRow, final int theCol) {
+        theMaze.myDoors[theRow][theCol].setDoorState(3);
     }
-    private void setMyRow(final int theRow) {
-        myRow = theRow;
+    void setMyRow(final int theRow) {
+            myPosRow = theRow;
     }
-    private void setMyCol(final int theCol) {
-        myCol = theCol;
+    void setMyCol(final int theCol) {
+            myPosCol = theCol;
     }
     public int getMyRow() {
-        return myRow;
+        return myPosRow;
     }
     public int getMyCol() {
-        return myCol;
+        return myPosCol;
     }
-    public Room[][] getMyMaze() {
-        return myMaze;
+    public Door getMyDoor() {
+        return myDoors[myPosRow][myPosCol];
+    }
+    public Door getAnyDoor(final int theRow, final int theCol) {
+        return myDoors[theRow][theCol];
     }
 }

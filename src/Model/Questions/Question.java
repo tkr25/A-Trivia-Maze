@@ -1,122 +1,137 @@
 package Model.Questions;
 
+
+import java.io.Serial;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 import java.sql.SQLException;
-import java.util.Scanner;
-
-public class Question {
 
 
 
+public class Question implements Serializable {
+    @Serial
+    private static final long serialVersionUID = -6432147852065234569L;
 
- //   private static Question myQuestion;
-    private String myQuestion;
-    private String myAnswer;
+    // Instance variables
+    private final Random myRand = new Random(); // Random number generator
+    private static List<String> myQuestions; // List to store questions
+    private static List<String> myAnswers; // List to store answers
+    private static List<Integer> myUsedQuestions; // List to track used questions
 
-  //  private String myQuestionAndAnswer;
-    protected Random myRand = new Random();
-
-    private final int randQ;
-    public Question() throws SQLException {
-
-         QBase questionsDB = new QBase();
-        //   questionsDB.createNewTable();
-
-        //1 to ... number of question
-        randQ = myRand.nextInt(6-1) + 1;
-
-        //get question from database randomly
-        myQuestion = questionsDB.getQuestion(randQ);
-        myAnswer = questionsDB.getAnswer(randQ);
-
-
-//        double probability = myRand.nextDouble();
-//        if (probability <= .50) {
-//            new TrueFalse();
-//        } else {
-//            new ShortAnswer();
+    // Constructor
+//    public Question(String tableName) throws SQLException {
+//        try {
+//            // Create a new instance of the QBase class to access the database
+//           // QBase questionsDB = new QBase();
+//
+//            // Retrieve all questions and answers from the specified table in the database
+//            //myQuestions = questionsDB.getAllQuestionsFromTable(tableName);
+//           // myAnswers = questionsDB.getAllAnswersFromTable(tableName);
+//
+//            // Close the database connection
+//            //questionsDB.closeDB();
+//
+//            // Initialize the list to track used questions
+//            myUsedQuestions = new ArrayList<>();
+//
+//        } catch (SQLException e) {
+//            System.out.println("Database error: " + e.getMessage());
 //        }
-    }
+//    }
 
-
-
-    public String getQuestion()
-    {
-    return myQuestion;
-
-    }
-    public void setQuestion(String theQuestion)
-    {
-        myQuestion =theQuestion;
-    }
-    public String getAnswer()
-    {
-        return myAnswer;
-
-    }
-    public void setAnswer(String theAnswer)
-    {
-        myAnswer =theAnswer;
-    }
-
-    //method to check if the answer is ture
-    public boolean checkIfCorrect (String theAnswer)
-    {
-        boolean check = false;
-
-        if((myAnswer.toLowerCase().trim()).equals(theAnswer.toLowerCase().trim()))
-        {
-
-            check = true;
+    /**
+     * Generates a random index for an unused question.
+     *
+     * @return The random index or -1 if no more questions are available.
+     */
+    private int generateRandUnusedInd() {
+        // Check if all questions have been used
+        if (myQuestions.size() == myUsedQuestions.size()) {
+            return -1; // No more available questions
         }
 
-        return check;
+        // Generate a random index
+        int randIndex = myRand.nextInt(myQuestions.size());
+
+        // Ensure the generated index is not already used
+        while (myUsedQuestions.contains(randIndex)) {
+            randIndex = myRand.nextInt(myQuestions.size());
+        }
+
+        // Add the generated index to the list of used questions
+        myUsedQuestions.add(randIndex);
+
+        // Return the generated index
+        return randIndex;
     }
 
-// string representation of the  question
+    /**
+     * Gets the current question.
+     *
+     * @return The current question or a message if no more questions are available.
+     */
+    public String getMyQuestion() {
+        // Generate a random index for the current question
+        int randIndex = generateRandUnusedInd();
+
+        // Check if there are still questions available
+        if (randIndex != -1) {
+            // Return the question at the generated index
+            return myQuestions.get(randIndex);
+        }
+
+        // Return a message indicating no more questions are available
+        return "No questions available";
+    }
+
+    /**
+     * Gets the answer for the current question.
+     *
+     * @return The answer or an empty string if no more questions are available.
+     */
+    public String getMyAnswer() {
+        // Get the index of the last used question
+        int lastIndex = myUsedQuestions.size() - 1;
+
+        // Check if there are any used questions
+        if (lastIndex >= 0 && lastIndex < myAnswers.size()) {
+            // Get the answer for the last used question
+            return myAnswers.get(myUsedQuestions.get(lastIndex));
+        }
+
+        // Return an empty string if no more questions are available
+        return "";
+    }
+
+//    /**
+//     * Checks if the user's answer matches the correct answer.
+//     *
+//     * @param theAnswer The user's answer.
+//     * @param myAnswer  The correct answer.
+//     * @return true if the answers match, false otherwise.
+//     */
+//    public boolean checkIfCorrect(String theAnswer, String myAnswer) {
+//        // Print the user's answer and the correct answer for testing purposes,comment out later
+//        System.out.println(theAnswer + " " + myAnswer);
+//
+//        // Compare the trimmed user's answer and the trimmed correct answer (case-insensitive)
+//        return myAnswer.trim().equalsIgnoreCase(theAnswer.trim());
+//    }
+
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder();
-        sb.append("\n" + myQuestion + "\n");
-        return sb.toString();
+        // Return a string representation of the current question
+        //   return "Question: " + getMyQuestion() + "\n";
+        return getMyQuestion() + "\n";
+    }
+
+    //for debugging purposes
+    public boolean isEmpty() {
+
+        return myUsedQuestions.size() == myQuestions.size();
     }
 
 
-
-
-    // temporary main method to check if question class and DB works properly,
-    //comment out or remove later
-//    public static void main(String[] args) throws SQLException {
-//
-//
-//        boolean myGameOverWin = false;
-//        int winTimes = 0;
-//
-//
-//        Scanner scanner = new Scanner(System.in);
-//        boolean playAgain = true;
-//
-//        while (playAgain) {
-//            Question question = new Question();
-//            System.out.println(question);
-//
-//            String answer = scanner.nextLine();
-//
-//            if (question.checkIfCorrect(answer)) {
-//                System.out.println("Correct!");
-//            } else {
-//                System.out.println("Incorrect.");
-//            }
-//
-//            System.out.println("Play again? (y/n)");
-//            String playAgainAnswer = scanner.nextLine();
-//
-//            if (playAgainAnswer.toLowerCase().equals("n")) {
-//                playAgain = false;
-//            }
-//        }
-//
-//        System.out.println("GAME OVER");
-//    }
 }
-
