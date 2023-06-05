@@ -32,6 +32,8 @@ public class Door  {
     public Door(String tableName) throws Exception {
         if (tableName.equalsIgnoreCase(GUIConstants.ONE_PIECE)) {
             tableName = tableName.substring(0, 5);
+        } else {
+            tableName = tableName.substring(0, 4);
         }
         myQuestion = new Question(tableName);
         myDoorState = UNKNOWN; // door is not attempted yet

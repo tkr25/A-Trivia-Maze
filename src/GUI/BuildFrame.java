@@ -57,7 +57,6 @@ public class BuildFrame extends Application implements EventHandler<ActionEvent>
         launch(theArgs);
     }
 
-
     @Override
     public void start(final Stage thePrimaryStage) {
         thePrimaryStage.setTitle(GUIConstants.TITLE);
@@ -389,19 +388,3 @@ public class BuildFrame extends Application implements EventHandler<ActionEvent>
         myButtons.get(GUIConstants.DOOR_D).setVisible(isDoorDVisible);
     }
 }
-
-//    private void checkForWindows() {
-//        int xCoordinate = myPosition.myPosition.x;
-//        int yCoordinate = myPosition.myPosition.y;
-//
-//        myButtons.get(GUIConstants.DOOR_A).setVisible(xCoordinate > 365);
-//        hideDoorA.setVisible(!(xCoordinate > 365));
-//
-//        myButtons.get(GUIConstants.DOOR_B).setVisible(yCoordinate > 465);
-//        hideDoorB.setVisible(!(yCoordinate > 465));
-//
-//        myButtons.get(GUIConstants.DOOR_C).setVisible(xCoordinate < 565);
-//        hideDoorC.setVisible(!(xCoordinate < 565));
-//
-//        myButtons.get(GUIConstants.DOOR_D).setVisible(yCoordinate < 665);
-//    }

@@ -8,7 +8,6 @@ import java.sql.SQLException;
 public class Question {
 
     // Instance variables
-    private final Random myRand = new Random(); // Random number generator
     private static List<String> myQuestions; // List to store questions
 
     private String myQuestion;
