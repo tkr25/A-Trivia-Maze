@@ -1,122 +1,92 @@
 package Model.Questions;
 
-import java.util.Random;
+
+import java.util.*;
 import java.sql.SQLException;
-import java.util.Scanner;
+
 
 public class Question {
 
+    // Instance variables
+    private final Random myRand = new Random(); // Random number generator
+    private static List<String> myQuestions; // List to store questions
 
-
-
- //   private static Question myQuestion;
     private String myQuestion;
+
     private String myAnswer;
+    private static List<String> myAnswers; // List to store answers
+    private static List<Integer> myOrderForQuestions; // List to track used questions
 
-  //  private String myQuestionAndAnswer;
-    protected Random myRand = new Random();
+    // Constructor
+    public Question(String tableName) throws SQLException {
+        try {
+            // Create a new instance of the QBase class to access the database
+            QBase questionsDB = new QBase();
 
-    private final int randQ;
-    public Question() throws SQLException {
+            // Retrieve all questions and answers from the specified table in the database
+            myQuestions = questionsDB.getAllQuestionsFromTable(tableName.substring(0, 4));
+            myAnswers = questionsDB.getAllAnswersFromTable(tableName.substring(0, 4));
 
-         QBase questionsDB = new QBase();
-        //   questionsDB.createNewTable();
+            // Close the database connection
+            questionsDB.closeDB();
 
-        //1 to ... number of question
-        randQ = myRand.nextInt(6-1) + 1;
+            // Initialize the list to track used questions
+            myOrderForQuestions = new ArrayList<>();
 
-        //get question from database randomly
-        myQuestion = questionsDB.getQuestion(randQ);
-        myAnswer = questionsDB.getAnswer(randQ);
+            for (int i = 0; i < 40; i++) {
+                myOrderForQuestions.add(i);
+            }
+            Collections.shuffle(myOrderForQuestions);
 
-
-//        double probability = myRand.nextDouble();
-//        if (probability <= .50) {
-//            new TrueFalse();
-//        } else {
-//            new ShortAnswer();
-//        }
-    }
-
-
-
-    public String getQuestion()
-    {
-    return myQuestion;
-
-    }
-    public void setQuestion(String theQuestion)
-    {
-        myQuestion =theQuestion;
-    }
-    public String getAnswer()
-    {
-        return myAnswer;
-
-    }
-    public void setAnswer(String theAnswer)
-    {
-        myAnswer =theAnswer;
-    }
-
-    //method to check if the answer is ture
-    public boolean checkIfCorrect (String theAnswer)
-    {
-        boolean check = false;
-
-        if((myAnswer.toLowerCase().trim()).equals(theAnswer.toLowerCase().trim()))
-        {
-
-            check = true;
+        } catch (SQLException e) {
+            System.out.println("Database error: " + e.getMessage());
         }
-
-        return check;
     }
 
-// string representation of the  question
+    public Question(boolean isWall) {
+        if (isWall) {
+            myQuestion = "This is wall";
+            myAnswer = "This is wall";
+        } else {
+            int index = getIndexQA();
+            myQuestion = myQuestions.get(index);
+            myAnswer = myAnswers.get(index);
+        }
+    }
+
+    public void setQuestion(String theQ) {
+        myQuestion = theQ;
+    }
+
+
+    /**
+     * Gets the current question.
+     *
+     * @return The current question or a message if no more questions are available.
+     */
+    public int getIndexQA() {
+        // Generate a random index for the current question
+        int randIndex = myOrderForQuestions.get(0);
+        myOrderForQuestions.remove(0);
+        return randIndex;
+    }
+
+    public String getQuestion() {
+        return myQuestion;
+    }
+
+
+    public String getAnswer() {
+        return myAnswer;
+    }
+
+
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder();
-        sb.append("\n" + myQuestion + "\n");
-        return sb.toString();
+        // Return a string representation of the current question
+
+        return getQuestion() + " \n" + getAnswer() + "\n";
     }
 
-
-
-
-    // temporary main method to check if question class and DB works properly,
-    //comment out or remove later
-//    public static void main(String[] args) throws SQLException {
-//
-//
-//        boolean myGameOverWin = false;
-//        int winTimes = 0;
-//
-//
-//        Scanner scanner = new Scanner(System.in);
-//        boolean playAgain = true;
-//
-//        while (playAgain) {
-//            Question question = new Question();
-//            System.out.println(question);
-//
-//            String answer = scanner.nextLine();
-//
-//            if (question.checkIfCorrect(answer)) {
-//                System.out.println("Correct!");
-//            } else {
-//                System.out.println("Incorrect.");
-//            }
-//
-//            System.out.println("Play again? (y/n)");
-//            String playAgainAnswer = scanner.nextLine();
-//
-//            if (playAgainAnswer.toLowerCase().equals("n")) {
-//                playAgain = false;
-//            }
-//        }
-//
-//        System.out.println("GAME OVER");
-//    }
+    //for debugging purposes
 }
-

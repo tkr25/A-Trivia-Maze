@@ -18,4 +18,13 @@ public class Position {
         myPosition.x += theDirection.x;
         myPosition.y += theDirection.y;
     }
+
+    public Point convertPoisition() {
+        return new Point(((myPosition.y - 465) / 50),(myPosition.x - 365) / 50);
+        //return new Point(((myPosition.x - 365) / 50), ((myPosition.y - 415) / 50));
+    }
+
+//    public Point setPosition(Point theModelUnits) {
+//
+//    }
 }

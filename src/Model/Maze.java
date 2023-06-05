@@ -1,61 +1,115 @@
 package Model;
 
+import GUI.Position;
+
+import java.awt.*;
 import java.io.Serializable;
 
-public class Maze extends Room implements Serializable{
+public class Maze implements Serializable {
     private static final long serialVersionUID = -6432147852365214569L;
-    private Room[][] myMaze;
-    private int myRow;
-    private int myCol;
-    private boolean canWin;
-    private final int MIN_SIZE = 4;
-    private final int RIGHT = 0;
-    private final int DOWN = 1;
-    private final  int LEFT = 2;
-    private final int UP = 3;
-    Maze() {
-        myCol = 0;
-        myRow = 0;
-        canWin = true;
-        makeMaze(MIN_SIZE);
+    private static final int SIZE = 5;
+
+    public Door[][] myLeftRightDoors;
+    public Door[][] myUpDownDoors;
+
+    private Point myPosition;
+
+    private Door myPotentialDoor;
+
+    private String[] myCurrentQA;
+
+    private String myTheme;
+
+    public Maze(String tableName) throws Exception {
+        myTheme = tableName;
+        myPosition = new Point(0, 0);
+        new Door(myTheme);
+        myLeftRightDoors = makeMaze(SIZE, SIZE + 1);
+        myUpDownDoors = makeMaze(SIZE + 1, SIZE);
     }
-    private void makeMaze(final int theSize) {
-        myMaze = new Room[theSize][theSize];
-        for (int i = 0; i < myMaze.length; i++) {
-            for (int j = 0; j < myMaze[0].length; j++) {
-                myMaze[i][j] = new Room();
+
+    private Door[][] makeMaze(int theRow, int theCol) throws Exception {
+        Door[][] doors = new Door[theRow][theCol];
+
+        for (int row = 0; row < theRow; row++) {
+            for (int col = 0; col < theCol; col++) {
+                if (theRow < theCol && (col == 0 || col == theCol - 1)) {
+                    doors[row][col] = new Door(true);
+                } else if (theRow > theCol && (row == 0 || row == theRow - 1)) {
+                    doors[row][col] = new Door(true);
+                }else {
+                    doors[row][col] = new Door(false);
+                }
             }
         }
+        return doors;
     }
-    private void move(final int theDir) {
-        if (theDir == RIGHT) {
-            setMyRow(myRow + 1);
-        } else if(theDir == DOWN) {
-            setMyCol(myCol + 1);
-        } else if(theDir == LEFT) {
-            setMyRow(myRow - 1);
-        } else if(theDir == UP) {
-            setMyCol(myCol - 1);
+
+    public void setMyPosition(Point thePosition) {
+        myPosition = thePosition;
+    }
+
+    /**
+     * Takes the guess, trims any extra space and then compares it
+     * to the answer. Capitalization doesn't affect result.
+     *
+     * @param theGuess the guess from the player.
+     * @return
+     */
+    public boolean checkAnswer(String theGuess) {
+        return myPotentialDoor.checkAnswer(theGuess);
+    }
+
+    public String getCurrentQ() {
+        return myCurrentQA[0];
+    }
+    public String getCurrentA() {
+        return myCurrentQA[1];
+    }
+
+    private void setDoorQA(Door theDoor) {
+        myPotentialDoor = theDoor;
+        myCurrentQA[0] = myPotentialDoor.getQuestion();
+        myCurrentQA[1] = myPotentialDoor.getAnswer();
+    }
+
+    /**
+     * Gets current Question and Answer for Door picked in the room
+     */
+    public void setIntendedDirection(Point theDirection) {
+        myCurrentQA = new String[2];
+        if (theDirection.equals(Position.RIGHT)) {
+            setDoorQA(myLeftRightDoors[myPosition.x][myPosition.y + 1]);
+        } else if (theDirection.equals((Position.DOWN))) {
+            setDoorQA(myUpDownDoors[myPosition.x + 1][myPosition.y]);
+        } else if (theDirection.equals(Position.LEFT)) {
+            setDoorQA(myLeftRightDoors[myPosition.x][myPosition.y]);
+        } else if (theDirection.equals(Position.UP)) {
+            setDoorQA(myUpDownDoors[myPosition.x][myPosition.y]);
         } else {
-            System.out.println("Shouldn't have got here.");
+            throw new IllegalArgumentException("Invalid Direction");
         }
     }
-    private void setCanWin() {
 
+    public static boolean isThereWayOut(String theMaze) {
+        return mazeSolver.solver(theMaze);
     }
-    private void setMyRow(final int theRow) {
-        myRow = theRow;
-    }
-    private void setMyCol(final int theCol) {
-        myCol = theCol;
-    }
-    public int getMyRow() {
-        return myRow;
-    }
-    public int getMyCol() {
-        return myCol;
-    }
-    public Room[][] getMyMaze() {
-        return myMaze;
+    @Override
+    public String toString() {
+        StringBuilder maze = new StringBuilder();
+        StringBuilder leftRightRow = new StringBuilder();
+        StringBuilder upDownRow = new StringBuilder();
+        for(int row = 0; row < SIZE; row++) {
+            for (int col = 0; col < SIZE; col++){
+                upDownRow.append("x").append(myUpDownDoors[row][col].getDoorState());
+                leftRightRow.append(myLeftRightDoors[row][col].getDoorState()).append(" ");
+            }
+            maze.append(upDownRow.append("x\n"));
+            maze.append(leftRightRow.append("3\n"));
+            upDownRow = new StringBuilder();
+            leftRightRow = new StringBuilder();
+        }
+        maze.replace(maze.length() - 3, maze.length() - 2, "w");
+        return maze.append("x3x3x3x3x3x ").toString();
     }
 }

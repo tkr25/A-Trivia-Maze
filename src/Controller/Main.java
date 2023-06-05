@@ -1,42 +1,16 @@
 package Controller;
 
-import Model.Questions.Question;
-
-import java.util.Scanner;
+import GUI.BuildFrame;
+import GUI.GUIConstants;
+import Model.Maze;
+import javafx.application.Application;
+import javafx.stage.Stage;
 
 public class Main {
 
+    public static Maze myMaze;
+    public static void main(String[] theArgs) throws Exception {
+        BuildFrame.main(theArgs);
+    }
 
-
-//  //  serialize to file
-//		try {
-//        SerializationUtil.serialize(maze, fileName);
-//    } catch (IOException e) {
-//        e.printStackTrace();
-//        return;
-//    }
-//
-//    Employee empNew = null;
-//		try {
-//        savedMaze = (Maze) SerializationUtil.deserialize(fileName);
-//    } catch (ClassNotFoundException | IOException e) {
-//        e.printStackTrace();
-//    }
-
-//        try {
-//
-//                questions.createNewTable();
-//            } catch (ClassNotFoundException e) {
-//                throw new RuntimeException(e);
-//            }
-
-
-//        while (!myGameOverWin)
-//        {
-//
-//        }
-
-
-
-//            }
 }
