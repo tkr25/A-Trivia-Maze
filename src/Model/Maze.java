@@ -3,7 +3,7 @@ package Model;
 import GUI.Position;
 
 import java.awt.*;
-import java.io.Serializable;
+import java.io.*;
 
 public class Maze implements Serializable {
     private static final long serialVersionUID = -6432147852365214569L;
@@ -45,6 +45,39 @@ public class Maze implements Serializable {
         return doors;
     }
 
+    public void saveGame() {
+        try {
+            FileOutputStream fileOut =
+                    new FileOutputStream("file:maze.ser");
+            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+            out.writeObject(this);
+            out.close();
+            fileOut.close();
+            System.out.printf("Serialized data is saved in file:maze.ser");
+        } catch (IOException i) {
+            i.printStackTrace();
+        }
+    }
+
+    public static Maze loadGame() throws Exception {
+        Maze m;
+        try {
+            FileInputStream fileIn = new FileInputStream("file:maze.ser");
+            ObjectInputStream in = new ObjectInputStream(fileIn);
+            m = (Maze) in.readObject();
+            in.close();
+            fileIn.close();
+        } catch (IOException i) {
+            i.printStackTrace();
+            m = new Maze("JAVA");
+        } catch (ClassNotFoundException c) {
+            System.out.println("class not found");
+            c.printStackTrace();
+            m = new Maze("Java");
+        }
+        return m;
+    }
+
     public void setMyPosition(Point thePosition) {
         myPosition = thePosition;
     }
@@ -63,8 +96,9 @@ public class Maze implements Serializable {
     public String getCurrentQ() {
         return myCurrentQA[0];
     }
-    public String getCurrentA() {
-        return myCurrentQA[1];
+
+    public Point getMyPosition() {
+        return new Point(myPosition.y * 50 + 365, myPosition.x * 50 + 465);
     }
 
     private void setDoorQA(Door theDoor) {

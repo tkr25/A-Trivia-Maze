@@ -3,10 +3,11 @@ package Model;
 import GUI.GUIConstants;
 import Model.Questions.Question;
 
+import java.io.Serializable;
 import java.sql.SQLException;
 
 
-public class Door  {
+public class Door implements Serializable {
 
     public static final int UNKNOWN = 0;
 

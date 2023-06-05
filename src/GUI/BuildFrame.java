@@ -19,10 +19,11 @@ import javafx.stage.Stage;
 
 
 import java.awt.*;
+import java.io.Serializable;
 import java.util.HashMap;
 
 
-public class BuildFrame extends Application implements EventHandler<ActionEvent> {
+public class BuildFrame extends Application implements EventHandler<ActionEvent>, Serializable {
 
     Maze myMaze;
     Circle myIAmHereMarker;
@@ -90,6 +91,14 @@ public class BuildFrame extends Application implements EventHandler<ActionEvent>
         Button aboutButton = buttonMaker(GUIConstants.ABOUT, GUIConstants.ABOUT_COORDINATES);
         Button themeButton = buttonMaker(GUIConstants.THEME, GUIConstants.THEME_COORDINATES);
 
+        loadButton.setOnAction(theEvent -> {
+            try {
+                startGame(myMaze = Maze.loadGame());
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+
         startButton.setOnAction(theEvent -> {
             try {
                 startGame();
@@ -110,12 +119,16 @@ public class BuildFrame extends Application implements EventHandler<ActionEvent>
     }
 
     private void startGame() throws Exception {
-        myPosition = new Position();
-        myMaze = new Maze(myTheme);
+        startGame(new Maze(myTheme));
+    }
+
+    private void startGame(Maze theMaze) throws Exception {
+        myMaze = theMaze;
+        myPosition = new Position(myMaze.getMyPosition());
 
         // Create you are here marker
         myIAmHereMarker = new Circle(10);
-        myIAmHereMarker.relocate(365,465);
+        myIAmHereMarker.relocate(myPosition.myPosition.x, myPosition.myPosition.y);
 
         // Create frame for gameplay
         myGameFrame = new Group();
@@ -156,6 +169,7 @@ public class BuildFrame extends Application implements EventHandler<ActionEvent>
         Button rulesButton = buttonMaker(GUIConstants.RULES,new Point(50, 580));
         Button shortcutButton = buttonMaker(GUIConstants.SHORTCUT, new Point(50, 650));
 
+        saveButton.setOnAction(theEvent -> myMaze.saveGame());
         shortcutButton.setOnAction(theEvent -> GUIConstants.SHORTCUT_DESCRIPTION.setVisible(!GUIConstants.SHORTCUT_DESCRIPTION.isVisible()));
         rulesButton.setOnAction(theEvent -> GUIConstants.RULES_DESCRIPTION.setVisible(!GUIConstants.RULES_DESCRIPTION.isVisible()));
         buttonPanel.getChildren().addAll(bottom, shortcutButton, rulesButton, saveButton);
@@ -229,6 +243,10 @@ public class BuildFrame extends Application implements EventHandler<ActionEvent>
         gameOverPanel.getChildren().addAll(blur, scroll, endingMessage);
         gameOverPanel.setVisible(true);
         myGameFrame.getChildren().add(gameOverPanel);
+    }
+
+    private void updatePos() {
+        myPosition = new Position(myMaze.getMyPosition());
     }
 
     private void makeQuestionPanel(){

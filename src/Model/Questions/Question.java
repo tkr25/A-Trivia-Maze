@@ -1,11 +1,12 @@
 package Model.Questions;
 
 
+import java.io.Serializable;
 import java.util.*;
 import java.sql.SQLException;
 
 
-public class Question {
+public class Question implements Serializable {
 
     // Instance variables
     private static List<String> myQuestions; // List to store questions
