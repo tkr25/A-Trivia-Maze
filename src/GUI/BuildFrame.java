@@ -1,6 +1,7 @@
 package GUI;
 
 
+import Model.Maze;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -8,290 +9,400 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
+import javafx.scene.control.TextField;
+import javafx.scene.layout.Background;
 import javafx.scene.paint.Color;
-import javafx.scene.paint.ImagePattern;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
-import javafx.scene.shape.Polygon;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
 
 import java.awt.*;
+import java.io.Serializable;
+import java.util.HashMap;
 
 
-public class BuildFrame extends Application implements EventHandler<ActionEvent> {
+public class BuildFrame extends Application implements EventHandler<ActionEvent>, Serializable {
 
-    final static Point DOOR_SIZE = new Point(100,150);
-
-    String myDifficulty = "EASY";
-    Button myAboutButton;
-    Button myDifficultyButton;
-    Button myDoorAButton;
-    Button myDoorBButton;
-    Button myDoorCButton;
-    Button myDoorDButton;
-    Button myLoadButton; //rgba(173, 165, 191, 1)
-    Button myRulesButton;
-    Button mySaveButton;
-    Button myShortcutButton;
-    Button myStartButton;
-    Button myThemeButton;
-
-    //Color baseColor = new Color(173.0/255, 165.0/255, 191.0/255, 1);
+    Maze myMaze;
     Circle myIAmHereMarker;
     Group myGameFrame;
 
-    Group easyMediumHardPanel;
+    Group myThemePanel;
     Group myStartMenu;
-    Image brick = new Image("file:brick.jpg");
-    ImageView rainImage = new ImageView(new Image("file:83196.jpg"));
-    Point myDirection;
+
+    Group myQuestionPanel;
+
+    Label myQuestion;
+    Label myQuestion2;
+
+    Label myQuestion3;
+
+    TextField myResponse;
+    Point myDesiredDirection;
 
     Position myPosition;
+
+    HashMap<String, Button> myButtons;
+
+    Rectangle hideDoorA;
+    Rectangle hideDoorB;
+    Rectangle hideDoorC;
+
     Stage myStage;
+
+    String myTheme = GUIConstants.JAVA;
+
     public static void main(final String[] theArgs) {
         launch(theArgs);
     }
 
     @Override
     public void start(final Stage thePrimaryStage) {
-        thePrimaryStage.setTitle("THE AMAZING MAZE");
-        thePrimaryStage.getIcons().add(new Image("file:logo.png"));
+        thePrimaryStage.setTitle(GUIConstants.TITLE);
+        thePrimaryStage.getIcons().add(GUIConstants.LOGO);
+
         myStage = thePrimaryStage;
+        myButtons = new HashMap();
+
         setStartMenu();
+        thePrimaryStage.setResizable(false);
         thePrimaryStage.show();
     }
 
     private void setStartMenu() {
         myStartMenu = new Group();
 
-        rainImage.setFitWidth(680);
-        rainImage.setFitHeight(680);
-        rainImage.setLayoutX(10);
-        rainImage.setLayoutY(10);
-        rainImage.setOpacity(0.5);
+        GUIConstants.RAIN_IMAGE.setFitWidth(GUIConstants.SCREEN_SIZE.x - GUIConstants.BORDER * 2);
+        GUIConstants.RAIN_IMAGE.setFitHeight(GUIConstants.SCREEN_SIZE.y - GUIConstants.BORDER * 2);
+        GUIConstants.RAIN_IMAGE.relocate(GUIConstants.BORDER,GUIConstants.BORDER);
+        GUIConstants.RAIN_IMAGE.setOpacity(0.25);
 
-        Label title = new Label("Amazing Maze");
-        //title.setPrefSize();
-        title.setScaleX(7);
-        title.setScaleY(15);
-        title.setLayoutX(300);
-        title.setLayoutY(200);
-        title.setTextFill(Color.BLACK);
+        // create title
+        Label title = new Label(GUIConstants.TITLE);
+        title.setFont(GUIConstants.TITLE_FONT);
+        title.relocate(GUIConstants.TITLE_COORDINATES.x, GUIConstants.TITLE_COORDINATES.y);
 
-        myStartButton = buttonMaker("START", new Point(300, 350));
-        myDifficultyButton = buttonMaker("DIFFICULTY", new Point(300, 500));
-        myDifficultyButton.setOnAction(theEvent -> easyMediumHardButtons());
-        myAboutButton = buttonMaker("ABOUT", new Point(150, 500));
-        myLoadButton = buttonMaker("LOAD", new Point(300, 425));
-        myThemeButton = buttonMaker("THEME", new Point(475, 500));
+        // create start menu buttons
+        Button startButton = buttonMaker(GUIConstants.START, GUIConstants.START_COORDINATES);
+        Button loadButton = buttonMaker(GUIConstants.LOAD, GUIConstants.DIFFICULTY_COORDINATES);
+        startButton.setPrefSize(GUIConstants.BUTTON_SIZE.x * 2 + 10, GUIConstants.BUTTON_SIZE.y);
+        Button aboutButton = buttonMaker(GUIConstants.ABOUT, GUIConstants.ABOUT_COORDINATES);
+        Button themeButton = buttonMaker(GUIConstants.THEME, GUIConstants.THEME_COORDINATES);
 
-        myStartMenu.getChildren().addAll(rainImage, myDifficultyButton, myStartButton,
-                myLoadButton, myThemeButton, myAboutButton, title);
+        loadButton.setOnAction(theEvent -> {
+            try {
+                startGame(myMaze = Maze.loadGame());
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
 
-        Scene scene = new Scene(myStartMenu, 700, 700, Color.GREY);
+        startButton.setOnAction(theEvent -> {
+            try {
+                startGame();
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        });
+        aboutButton.setOnAction(theEvent -> GUIConstants.ABOUT_DESCRIPTION.setVisible(!GUIConstants.ABOUT_DESCRIPTION.isVisible()));
+        themeButton.setOnAction(theEvent -> setVisibility(myThemePanel));
+
+        myStartMenu.getChildren().addAll(GUIConstants.RAIN_IMAGE, startButton, //difficultyButton,
+                loadButton, themeButton, aboutButton, title);
+
+        createThemedButtonsPanel();
+        createLabel(myStartMenu, GUIConstants.ABOUT_DESCRIPTION, GUIConstants.ABOUT_LABEL_COORDINATES);
+        Scene scene = new Scene(myStartMenu, GUIConstants.SCREEN_SIZE.x, GUIConstants.SCREEN_SIZE.y, Color.GREY);
         myStage.setScene(scene);
     }
 
-    private void easyMediumHardButtons() {
-        easyMediumHardPanel = new Group();
-        flipStartOptionsVisible();
-
-        Button easy = buttonMaker("EASY", new Point(300,500));
-        easy.setOnAction(theEvent -> setDifficulty(easy.getText()));
-        Button medium = buttonMaker("MEDIUM", new Point(300,570));
-        medium.setOnAction(theEvent -> setDifficulty(medium.getText()));
-        Button hard = buttonMaker("HARD", new Point(300, 640));
-        hard.setOnAction(theEvent -> setDifficulty(hard.getText()));
-
-        easyMediumHardPanel.getChildren().addAll(easy, medium, hard);
-        myStartMenu.getChildren().add(easyMediumHardPanel);
+    private void startGame() throws Exception {
+        startGame(new Maze(myTheme));
     }
 
-    private void flipStartOptionsVisible() {
-        myStartButton.setVisible(!myStartButton.isVisible());
-        myLoadButton.setVisible(!myLoadButton.isVisible());
-        myDifficultyButton.setVisible(!myDifficultyButton.isVisible());
-    }
-
-    private void setDifficulty(String theDifficulty) {
-        myDifficulty = theDifficulty;
-        myDifficultyButton.setText(theDifficulty);
-        myStartMenu.getChildren().removeAll(easyMediumHardPanel);
-        flipStartOptionsVisible();
-    }
-
-    private void startGame() {
-        myDirection = Position.LEFT;
-        myPosition = new Position();
+    private void startGame(Maze theMaze) throws Exception {
+        myMaze = theMaze;
+        myPosition = new Position(myMaze.getMyPosition());
 
         // Create you are here marker
         myIAmHereMarker = new Circle(10);
-        myIAmHereMarker.setLayoutX(475);
-        myIAmHereMarker.setLayoutY(475);
+        myIAmHereMarker.relocate(myPosition.myPosition.x, myPosition.myPosition.y);
 
         // Create frame for gameplay
         myGameFrame = new Group();
 
-        // Create the doors
+        // Create the room
         Group room = new Group();
-        Polygon doorA = new Polygon(250, 100, 250, 250, 350, 250, 350, 100);
-        doorA.setFill(new ImagePattern(new Image("file:doorA.jpg")));
-        myDoorAButton = buttonMaker("A", new Point(50,150), DOOR_SIZE,false);
-        myDoorBButton = buttonMaker("B", new Point(250,100), DOOR_SIZE, true);
-        myDoorCButton = buttonMaker("C", new Point(500,150), DOOR_SIZE, false);
-        myDoorDButton = buttonMaker("D", new Point(325,550), DOOR_SIZE, false);
-        checkForWindows();
+        Rectangle backroundDoor = new Rectangle(0,0, GUIConstants.ROOM_SIZE.x, GUIConstants.ROOM_SIZE.y);
+        backroundDoor.setFill(GUIConstants.ROOM_DOORS_IMAGE);
 
-        // Create Walls
-        Polygon wallA = new Polygon(0 ,0, 0, 500, 200, 200, 200, 0);
-        wallA.setFill(new ImagePattern(new Image("file:sideBrick.jpg"), 0, 0, 1.7, 1, true));
-        Rectangle wallB = new Rectangle(168, 0,364,250);
-        wallB.setFill(new ImagePattern(brick, -.1, 0, 100, 80, false));
-        Polygon wallC = new Polygon(532,0, 700, 0, 700, 500, 532, 250);
-        wallC.setFill(new ImagePattern(new Image("file:sideBrick.jpg"), -0.8, -0.1, 1.7, 1, true));
+        Button doorAButton = doorMaker(GUIConstants.DOOR_A, GUIConstants.DOOR_A_COORDINATES,
+                                       GUIConstants.DOOR_A_DIMENSIONS, Position.LEFT);
 
-        // Create Floor
-        Rectangle floor = new Rectangle(0,0,750, 500);
-        floor.setFill(new ImagePattern( new Image("file:floor.jpg"), 0,0,0,0,true));
+        Button doorBButton = doorMaker(GUIConstants.DOOR_B, GUIConstants.DOOR_B_COORDINATES,
+                                       GUIConstants.DOOR_B_DIMENSIONS, Position.UP);
 
-        room.getChildren().addAll(floor, wallA, wallC, wallB, doorA,
-                myDoorBButton, myDoorCButton, myDoorAButton, myDoorDButton);
+        Button doorCButton = doorMaker(GUIConstants.DOOR_C, GUIConstants.DOOR_C_COORDINATES,
+                                       GUIConstants.DOOR_C_DIMENSIONS, Position.RIGHT);
+
+        Button doorDButton = buttonMaker(GUIConstants.DOOR_D, GUIConstants.DOOR_D_COORDINATES);
+        doorDButton.setOnAction(theEvent -> doorClicked(Position.DOWN));
+
+        Rectangle smallBrickSquare = new Rectangle(200, 500, 200,300);
+        smallBrickSquare.setFill(GUIConstants.BRICK_ONLY);
+
+        makeHidePanels();
+        makeQuestionPanel();
+        room.getChildren().addAll(smallBrickSquare, backroundDoor,
+                doorAButton, hideDoorA, doorBButton, hideDoorB,
+                doorCButton, hideDoorC, doorDButton, myQuestionPanel);
+        //checkForWindows();
+        checkForWalls();
 
         // Create button panel
         Group buttonPanel = new Group();
-        Rectangle bottom = new Rectangle(0, 500,300,300);
-        bottom.setFill(Color.TAN);
-        mySaveButton = buttonMaker("SAVE", new Point(100, 510));
-        myRulesButton = buttonMaker("RULES",new Point(100, 580));
-        myShortcutButton = buttonMaker("SHORTCUTS", new Point(100, 650));
-        buttonPanel.getChildren().addAll(bottom, myShortcutButton, myRulesButton, mySaveButton);
+        Rectangle bottom = new Rectangle(0, 500,200,300);
+        bottom.setFill(GUIConstants.BRICK_ONLY);
+        Button saveButton = buttonMaker(GUIConstants.SAVE, new Point(50, 510));
+        Button rulesButton = buttonMaker(GUIConstants.RULES,new Point(50, 580));
+        Button shortcutButton = buttonMaker(GUIConstants.SHORTCUT, new Point(50, 650));
+
+        saveButton.setOnAction(theEvent -> myMaze.saveGame());
+        shortcutButton.setOnAction(theEvent -> GUIConstants.SHORTCUT_DESCRIPTION.setVisible(!GUIConstants.SHORTCUT_DESCRIPTION.isVisible()));
+        rulesButton.setOnAction(theEvent -> GUIConstants.RULES_DESCRIPTION.setVisible(!GUIConstants.RULES_DESCRIPTION.isVisible()));
+        buttonPanel.getChildren().addAll(bottom, shortcutButton, rulesButton, saveButton);
 
         // Create grid
         Group grid = new Group();
-        Rectangle base = new Rectangle(450, 450, 250, 250);
+        Rectangle base = new Rectangle(350, 450, 250, 250);
         base.setFill(Color.WHITE);
         grid.getChildren().add(base);
-        for (int i = 450; i <= 700; i+=50) {
+
+        for (int i = 350; i <= 600; i+=50) {
             grid.getChildren().add(new Line(i, 450, i, 700));
-            grid.getChildren().add(new Line(450, i, 700, i));
+            grid.getChildren().add(new Line(350, i + 100, 600, i + 100));
         }
 
         myGameFrame.getChildren().addAll(room, buttonPanel, grid, myIAmHereMarker);
+        createLabel(myGameFrame, GUIConstants.SHORTCUT_DESCRIPTION, GUIConstants.SHORTCUT_LABEL_COORDINATES);
+        createLabel(myGameFrame,GUIConstants.RULES_DESCRIPTION, GUIConstants.RULES_LABEL_COORDINATES);
 
-        Scene scene = new Scene(myGameFrame, 800, 750);
+        Scene scene = new Scene(myGameFrame, GUIConstants.SCREEN_SIZE.x, GUIConstants.SCREEN_SIZE.y);
         myStage.setScene(scene);
     }
 
-//    private void about() {
-//        Popup pop = PopupBuilder.create().width(50).height(100).autoFix(true).build();
-//        pop.show(myStage);
-//    }
+    private void makeHidePanels(){
+        hideDoorC = new Rectangle(483,0,117, GUIConstants.ROOM_SIZE.y);
+        hideDoorC.setFill(GUIConstants.DOOR_C_LOCKED_IMAGE);
+        hideDoorB = new Rectangle(114,0,370, GUIConstants.ROOM_SIZE.y);
+        hideDoorB.setFill(GUIConstants.DOOR_B_LOCKED_IMAGE);
 
-    private void changePositions(Point theChange) {
-        myPosition.changePositions(theChange);
-        myIAmHereMarker.setLayoutX(myPosition.myPosition.x);
-        myIAmHereMarker.setLayoutY(myPosition.myPosition.y);
-        checkForWindows();
+        hideDoorA = new Rectangle(0,0,116, GUIConstants.ROOM_SIZE.y);
+        hideDoorA.setFill(GUIConstants.DOOR_A_LOCKED_IMAGE);
     }
-    private Button buttonMaker(final String theName, final Point theCoordinate) {
-        return buttonMaker(theName, theCoordinate, new Point(100,50), false);
+
+    private int centerQuestion(String theQuestion) {
+        return 300 - theQuestion.length() * 4;
     }
-    private Button buttonMaker(final String theName, final Point theCoordinate,
-                             final Point theSize, final boolean theBlendIn) {
-        Button button = new Button(theName);
-        button.setPrefSize(theSize.x, theSize.y);
-        button.setLayoutX(theCoordinate.x);
-        button.setLayoutY(theCoordinate.y);
-        button.setOnAction(this);
-        if (theBlendIn) {
-            button.setStyle("-fx-background-color: rgba(84, 72, 113, 0.46)");
+
+    private void checkAnswer() {
+        boolean isCorrect = myMaze.checkAnswer(myResponse.getText());
+
+        if (isCorrect) {
+            changePositions(myDesiredDirection);
+        } else {
+            checkForWalls();
         }
+        if (!Maze.isThereWayOut(myMaze.toString())) {
+            myButtons.get(GUIConstants.RULES).setVisible(false);
+            myButtons.get(GUIConstants.SHORTCUT).setVisible(false);
+            gameOver(false);
+        }
+        myButtons.get(GUIConstants.SAVE).setVisible(true);
+        myQuestionPanel.setVisible(false);
+    }
+
+    private void gameOver(boolean youWon){
+        Group gameOverPanel = new Group();
+
+        Rectangle blur = new Rectangle(0,0, GUIConstants.SCREEN_SIZE.x, GUIConstants.SCREEN_SIZE.y);
+        blur.setOpacity(0.2);
+        blur.setFill(Color.WHITE);
+        Rectangle scroll = GUIConstants.SCROLL_DIMENTIONS_AND_COORDINATES;
+        scroll.setFill(GUIConstants.SCROLL_IMAGE);
+        Label endingMessage = new Label();
+        if (youWon) {
+            endingMessage.setText("YOU WON \n GAME OVER");
+        } else {
+            endingMessage.setText("NO WAY OUT \n GAME OVER");
+        }
+        endingMessage.setFont(GUIConstants.GAME_OVER_FONT);
+        endingMessage.relocate(120, 190);
+        gameOverPanel.getChildren().addAll(blur, scroll, endingMessage);
+        gameOverPanel.setVisible(true);
+        myGameFrame.getChildren().add(gameOverPanel);
+    }
+
+    private void updatePos() {
+        myPosition = new Position(myMaze.getMyPosition());
+    }
+
+    private void makeQuestionPanel(){
+        myQuestionPanel = new Group();
+
+        Rectangle blur = new Rectangle(0,0, GUIConstants.ROOM_SIZE.x, GUIConstants.ROOM_SIZE.y);
+        blur.setOpacity(0.2);
+        Rectangle scroll = GUIConstants.SCROLL_DIMENTIONS_AND_COORDINATES;
+        scroll.setFill(GUIConstants.SCROLL_IMAGE);
+
+        myQuestion = new Label();
+        myQuestion.setFont(GUIConstants.GENERAL_FONT);
+        myQuestion2 = new Label();
+        myQuestion2.setFont(GUIConstants.GENERAL_FONT);
+        myQuestion3 = new Label();
+        myQuestion3.setFont(GUIConstants.GENERAL_FONT);
+
+        myResponse = new TextField();
+        myResponse.relocate(220, 280);
+        myResponse.setOnAction(theEvent -> checkAnswer());
+        myQuestionPanel.getChildren().addAll(blur, scroll, myQuestion, myQuestion2, myQuestion3, myResponse);
+        myQuestionPanel.setVisible(false);
+    }
+
+
+    private void setVisibility(Group thePanel) {
+        GUIConstants.ABOUT_DESCRIPTION.setVisible(false);
+        flipStartOptionsVisible();
+        thePanel.setVisible(true);
+    }
+
+    private void flipStartOptionsVisible() {
+        for (String theButtonName: GUIConstants.myStartMenuButtons) {
+            Button button = myButtons.get(theButtonName);
+            button.setVisible(!button.isVisible());
+        }
+    }
+
+    private void setButtonSetting(String theButton, String theSetting, Group thePanel) {
+        myButtons.get(theButton).setText(theSetting);
+        thePanel.setVisible(false);
+        myTheme = theSetting;
+        flipStartOptionsVisible();
+    }
+
+    private void createLabel(Group thePanel, Label theLabel, Point theCoordinates) {
+        // create About label
+        theLabel.relocate(theCoordinates.x, theCoordinates.y);
+        theLabel.setFont(GUIConstants.GENERAL_FONT);
+        theLabel.setBackground(Background.fill(Color.LIGHTGRAY));
+        thePanel.getChildren().add(theLabel);
+        theLabel.setVisible(false);
+    }
+
+    private Button doorMaker(final String theName, final Point theCoordinate, final Point theDimenstion, final Point theDirection) {
+        Button button = buttonMaker(theName, theCoordinate);
+        button.setPrefSize(theDimenstion.x, theDimenstion.y);
+        button.setStyle(GUIConstants.TRANSPARENT);
+        button.setOnAction(theEvent -> doorClicked(theDirection));
         return button;
     }
 
-    private void checkForWindows() {
-        int xCoordinate = myPosition.myPosition.x;
-        int yCoordinate = myPosition.myPosition.y;
-        myDoorAButton.setVisible(xCoordinate > 475);
-        myDoorBButton.setVisible(yCoordinate > 475);
-        myDoorCButton.setVisible(xCoordinate < 675);
-        myDoorDButton.setVisible(yCoordinate < 675);
+    private Button buttonMaker(final String theName, final Point theCoordinate) {
+        Button button = new Button(theName);
+        button.setPrefSize(GUIConstants.BUTTON_SIZE.x, GUIConstants.BUTTON_SIZE.y);
+        button.relocate(theCoordinate.x, theCoordinate.y);
+        myButtons.put(theName, button);
+        return button;
     }
-    @Override
-    public void handle(ActionEvent actionEvent) {
-        Object source = actionEvent.getSource();
-        if (source == myStartButton) {
-            startGame();
-        } else if (source == myDoorAButton) {
-            changePositions(Position.LEFT);
-        } else if (source == myDoorBButton) {
-            changePositions(Position.UP);
-        } else if (source == myDoorCButton) {
-            changePositions(Position.RIGHT);
-        } else if (source == myDoorDButton) {
-            changePositions(Position.DOWN);
+
+
+    private void createThemedButtonsPanel() {
+        myThemePanel = new Group();
+
+        Button themeOne = buttonMaker(GUIConstants.JAVA, GUIConstants.THEME_ONE_COORDINATES);
+        Button themeTwo = buttonMaker(GUIConstants.ONE_PIECE, GUIConstants.THEME_TWO_COORDINATES);
+        Button themeThree = buttonMaker(GUIConstants.HARRY_POTTER, GUIConstants.THEME_THREE_COORDINATES);
+
+        themeOne.setOnAction(theEvent -> setButtonSetting(GUIConstants.THEME, GUIConstants.JAVA, myThemePanel));
+        themeTwo.setOnAction(theEvent -> setButtonSetting(GUIConstants.THEME, GUIConstants.ONE_PIECE, myThemePanel));
+        themeThree.setOnAction(theEvent -> setButtonSetting(GUIConstants.THEME, GUIConstants.HARRY_POTTER, myThemePanel));
+
+        myThemePanel.getChildren().addAll(themeOne, themeTwo, themeThree);
+        myStartMenu.getChildren().add(myThemePanel);
+        myThemePanel.setVisible(false);
+    }
+    private void doorClicked(Point theDirection) {
+        myResponse.clear();
+        myDesiredDirection = theDirection;
+        myButtons.get(GUIConstants.SAVE).setVisible(false);
+        myMaze.setIntendedDirection(theDirection);
+
+        String q = myMaze.getCurrentQ();
+        if (q.length() == 1) {
+            changePositions(myDesiredDirection);
+        } else {
+            myQuestion.setText(" ");
+            myQuestion2.setText(" ");
+            myQuestion3.setText(" ");
+            int placement = 240;
+            if (q.length() >= GUIConstants.MAX_LETTERS_ON_LINE) {
+                String temp = q.substring(GUIConstants.MAX_LETTERS_ON_LINE);
+                int cutAtIndex = GUIConstants.MAX_LETTERS_ON_LINE + 1 + temp.indexOf(" ");
+
+                myQuestion.setText(q.substring(0, cutAtIndex));
+                myQuestion.relocate(centerQuestion(myQuestion.getText()), placement - 20);
+                q = q.substring(cutAtIndex);
+                if (q.length() >= GUIConstants.MAX_LETTERS_ON_LINE) {
+                    temp = q.substring(GUIConstants.MAX_LETTERS_ON_LINE);
+                    cutAtIndex = GUIConstants.MAX_LETTERS_ON_LINE + 1 + temp.indexOf(" ");
+                    myQuestion2.setText(q.substring(0, cutAtIndex));
+                    q = q.substring(cutAtIndex);
+                    myQuestion2.relocate(centerQuestion(myQuestion2.getText()), placement);
+                    placement += 20;
+                }
+            }
+            myQuestion3.setText(q);
+            myQuestion3.relocate(centerQuestion(myQuestion3.getText()), placement);
+
+            //myMaze.getDoor();
+            myQuestionPanel.setVisible(true);
         }
     }
+    private void changePositions(Point theChange) {
+        myPosition.changePositions(theChange);
+        myMaze.setMyPosition(myPosition.convertPoisition());
+        myIAmHereMarker.relocate(myPosition.myPosition.x, myPosition.myPosition.y);
+        if (myPosition.convertPoisition().equals(GUIConstants.WINNING_POSITION)) {
+            gameOver(true);
+        } else {
+            System.out.println(myPosition.convertPoisition());
+            checkForWalls();
+        }
+    }
+
+
+    @Override
+    public void handle(ActionEvent actionEvent) {
+    }
+    private void checkForWalls() {
+        Point modelPos = myPosition.convertPoisition();
+
+        boolean isDoorAVisible = myMaze.myLeftRightDoors[modelPos.x][modelPos.y].getDoorState() < 2;
+        boolean isDoorBVisible = myMaze.myUpDownDoors[modelPos.x][modelPos.y].getDoorState() < 2;
+        boolean isDoorCVisible = myMaze.myLeftRightDoors[modelPos.x][modelPos.y + 1].getDoorState() < 2;
+        boolean isDoorDVisible = myMaze.myUpDownDoors[modelPos.x + 1][modelPos.y].getDoorState() < 2;
+
+        myButtons.get(GUIConstants.DOOR_A).setVisible(isDoorAVisible);
+        hideDoorA.setVisible(!isDoorAVisible);
+
+        myButtons.get(GUIConstants.DOOR_B).setVisible(isDoorBVisible);
+        hideDoorB.setVisible(!isDoorBVisible);
+
+        myButtons.get(GUIConstants.DOOR_C).setVisible(isDoorCVisible);
+        hideDoorC.setVisible(!isDoorCVisible);
+
+        myButtons.get(GUIConstants.DOOR_D).setVisible(isDoorDVisible);
+    }
 }
-
-//        myDoorAButton = new Button("A");
-//        myDoorAButton.setPrefSize(100,150);
-//        //doorAButton.setStyle("-fx-background-color: rgba(0, 0, 0, 0)");
-//        myDoorAButton.setLayoutX(50);
-//        myDoorAButton.setLayoutY(150);
-//        myDoorAButton.setOnAction(this);
-//        myDoorBButton = new Button("B");
-//        myDoorBButton.setPrefSize(100,150);
-//        myDoorBButton.setStyle("-fx-background-color: rgba(0, 0, 0, 0)");
-//        myDoorBButton.setLayoutX(250); //50
-//        myDoorBButton.setLayoutY(100); //150
-//        myDoorBButton.setOnAction(this);
-//        myDoorCButton = new Button("C");
-//        myDoorCButton.setPrefSize(100,150);
-//        //doorCButton.setStyle("-fx-background-color: rgba(0, 0, 0, 0)");
-//        myDoorCButton.setLayoutX(500);
-//        myDoorCButton.setLayoutY(150);
-//        myDoorCButton.setOnAction(this);
-//        myDoorDButton = new Button("D");
-//        myDoorDButton.setPrefSize(50,50);
-//        //doorDButton.setStyle("-fx-background-color: rgba(1, 10, 50, 0)");
-//        myDoorDButton.setLayoutX(350);
-//        myDoorDButton.setLayoutY(550);
-//        myDoorDButton.setOnAction(this);
-
-//myRulesButton = new Button("RULES");
-//mySaveButton = new Button("SAVE");
-//myShortcutButton = new Button("SHORTCUTS");
-//buttonMaker(mySaveButton, new Point(125, 530));
-//buttonMaker(myRulesButton, new Point(125, 600));
-//buttonMaker(myShortcutButton, new Point(110, 670));
-
-//        myDifficultyButton = new Button(" DIFFICULTY ");
-//        myAboutButton = new Button("ABOUT");
-//        myLoadButton = new Button("LOAD GAME");
-//        myThemeButton = new Button("THEME");
-//        buttonMaker(myLoadButton, new Point(300, 425));
-//        buttonMaker(myAboutButton, new Point(150, 500));
-//        buttonMaker(myDifficultyButton, new Point(300, 500));
-//        buttonMaker(myThemeButton, new Point(475, 500));
-
-//        if (xCoordinate <= 475) {
-//            myDoorAButton.setVisible(false);
-//        } else if (xCoordinate >= 675) {
-//            myDoorCButton.setVisible(false);
-//        } else {
-//            myDoorAButton.setVisible(true);
-//            myDoorCButton.setVisible(true);
-//        }
-//        if (yCoordinate <= 475) {
-//            myDoorBButton.setVisible(false);
-//        } else if (yCoordinate >= 675) {
-//            myDoorDButton.setVisible(false);
-//        } else {
-//            myDoorBButton.setVisible(true);
-//            myDoorDButton.setVisible(true);
-//        }
