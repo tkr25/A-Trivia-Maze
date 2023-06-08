@@ -38,6 +38,8 @@ public class GUIConstants {
     final static Font GENERAL_FONT = new Font("Bodoni MT Black", 15);
     final static Font GAME_OVER_FONT = new Font("Bodoni MT Black", 50);
     final static Font TITLE_FONT = new Font("Bodoni MT Black", 70);
+
+    final public static Point GUI_ORGIN = new Point(new Point (365, 465));
     final static Point DOOR_A_DIMENSIONS = new Point(80,220);
 
     final static Point DOOR_A_COORDINATES = new Point(15,175);
@@ -105,12 +107,12 @@ public class GUIConstants {
 
     final static String DOOR_C = "DOOR_C";
 
-    final static String DOOR_D = "GO DOWN?";
+    final static String DOOR_D = "GO _DOWN?";
 
     final static Label RULES_DESCRIPTION =  new Label("FIND A PATH BY \n SELECTING DOORS\n " +
             " AND A QUESTION \n WILL APPEAR.\n" +
             " ANSWER CORRECTLY \n-> DOOR UNLOCKED\n " +
-            " ANSWER WRONG \n-> DOOR LOCKED \n ");
+            " ANSWER WRONG \n-> DOOR LOCKED \n EXIT-> BOTTOM RIGHT");
 
     final static Label SHORTCUT_DESCRIPTION =  new Label("ALT + A -> GO LEFT\n" +
             "ALT + B -> GO UP \nALT + C -> GO RIGHT\nALT + D -> GO DOWN");
