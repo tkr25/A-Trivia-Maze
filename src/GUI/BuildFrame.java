@@ -404,5 +404,6 @@ public class BuildFrame extends Application implements EventHandler<ActionEvent>
         hideDoorC.setVisible(!isDoorCVisible);
 
         myButtons.get(GUIConstants.DOOR_D).setVisible(isDoorDVisible);
+
     }
 }

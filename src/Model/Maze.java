@@ -1,127 +1,149 @@
 package Model;
 
-import java.io.Serial;
-import java.io.Serializable;
+import GUI.Position;
 
-public class Maze implements Serializable{
-    @Serial
+import java.awt.*;
+import java.io.*;
+
+public class Maze implements Serializable {
     private static final long serialVersionUID = -6432147852365214569L;
-    private Door[][] myDoors; // 2D array to store the doors in the maze
     private static final int SIZE = 5;
-    private int myPosRow; //  current row position
-    private int myPosCol; // current column position
 
-    Maze() throws Exception {
-        myPosCol = 0;
-        myPosRow = 0;
-        makeMaze();
+    public Door[][] myLeftRightDoors;
+    public Door[][] myUpDownDoors;
+
+    private Point myPosition;
+
+    private Door myPotentialDoor;
+
+    private String[] myCurrentQA;
+
+    private String myTheme;
+
+    public Maze(String tableName) throws Exception {
+        myTheme = tableName;
+        myPosition = new Point(0, 0);
+        new Door(myTheme);
+        myLeftRightDoors = makeMaze(SIZE, SIZE + 1);
+        myUpDownDoors = makeMaze(SIZE + 1, SIZE);
     }
-    private void makeMaze() throws Exception {
-        myDoors = new Door[SIZE][SIZE]; // 5x5 array of doors
-        for (int row = 0; row < SIZE; row++) {
-            for (int col = 0; col < SIZE; col++) {
-                if (row == 0 && col == 0 || row == SIZE  - 1 && col == SIZE - 1) {
-                    myDoors[row][col] = new Door();
-                    myDoors[row][col].setDoorState(1);// entrance and exit doors to open
-                } else {
-                    myDoors[row][col] = new Door(); // new Door object for other positions
+
+    private Door[][] makeMaze(int theRow, int theCol) throws Exception {
+        Door[][] doors = new Door[theRow][theCol];
+
+        for (int row = 0; row < theRow; row++) {
+            for (int col = 0; col < theCol; col++) {
+                if (theRow < theCol && (col == 0 || col == theCol - 1)) {
+                    doors[row][col] = new Door(true);
+                } else if (theRow > theCol && (row == 0 || row == theRow - 1)) {
+                    doors[row][col] = new Door(true);
+                }else {
+                    doors[row][col] = new Door(false);
                 }
             }
         }
-        myPosRow = 0; // Set initial player row position
-        myPosCol = 0; // Set initial player column position
-    }
-    public boolean validateSelection(final int theRow, final int theCol) {
-        return ((theRow >= 0 && theCol >= 0) &&
-                (theCol <= SIZE - 1 && theRow <= SIZE - 1)) &&
-                myDoors[theRow][theCol].getDoorState() < 2;
+        return doors;
     }
 
-    public boolean canMove(final int theDir) {
-        boolean result  = false;
-        if (theDir == Direction.RIGHT.getMyDirectionNumber()) {
-            result = validateSelection(myPosRow, moveRight());
-        } else if(theDir == Direction.DOWN.getMyDirectionNumber()) {
-            result = validateSelection(moveDown(), myPosCol);
-        } else if(theDir == Direction.LEFT.getMyDirectionNumber()) {
-            result = validateSelection(myPosRow, moveLeft());
-        } else if(theDir == Direction.UP.getMyDirectionNumber()) {
-            result = validateSelection(moveUp(), myPosCol);
+    public void saveGame() {
+        try {
+            FileOutputStream fileOut =
+                    new FileOutputStream("file:maze.ser");
+            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+            out.writeObject(this);
+            out.close();
+            fileOut.close();
+            System.out.printf("Serialized data is saved in file:maze.ser");
+        } catch (IOException i) {
+            i.printStackTrace();
         }
-        return result;
+    }
 
+    public static Maze loadGame() throws Exception {
+        Maze m;
+        try {
+            FileInputStream fileIn = new FileInputStream("file:maze.ser");
+            ObjectInputStream in = new ObjectInputStream(fileIn);
+            m = (Maze) in.readObject();
+            in.close();
+            fileIn.close();
+        } catch (IOException i) {
+            i.printStackTrace();
+            m = new Maze("JAVA");
+        } catch (ClassNotFoundException c) {
+            System.out.println("class not found");
+            c.printStackTrace();
+            m = new Maze("Java");
+        }
+        return m;
     }
-    private int moveRight() {
-        return myPosCol + 1;
+
+    public void setMyPosition(Point thePosition) {
+        myPosition = thePosition;
     }
-    private int moveLeft() {
-        return myPosCol - 1;
+
+    /**
+     * Takes the guess, trims any extra space and then compares it
+     * to the answer. Capitalization doesn't affect result.
+     *
+     * @param theGuess the guess from the player.
+     * @return
+     */
+    public boolean checkAnswer(String theGuess) {
+        return myPotentialDoor.checkAnswer(theGuess);
     }
-    int moveDown() {
-        return myPosRow + 1;
+
+    public String getCurrentQ() {
+        return myCurrentQA[0];
     }
-    int moveUp() {
-        return myPosRow - 1;
+
+    public Point getMyPosition() {
+        return new Point(myPosition.y * 50 + 365, myPosition.x * 50 + 465);
     }
-    public void movePosition(final int theDir) {
-        if (canMove(theDir)) {
-            if (theDir == Direction.RIGHT.getMyDirectionNumber()) {
-                setMyCol(moveRight());
-            } else if (theDir == Direction.DOWN.getMyDirectionNumber()) {
-                setMyRow(moveDown());
-            } else if (theDir == Direction.LEFT.getMyDirectionNumber()) {
-                setMyCol(moveLeft());
-            } else if (theDir == Direction.UP.getMyDirectionNumber()) {
-                setMyRow(moveUp());
-            } else {
-                System.out.println("Shouldn't have got here.");
-                System.exit(0);
-            }
+
+    private void setDoorQA(Door theDoor) {
+        myPotentialDoor = theDoor;
+        myCurrentQA[0] = myPotentialDoor.getQuestion();
+        myCurrentQA[1] = myPotentialDoor.getAnswer();
+    }
+
+    /**
+     * Gets current Question and Answer for Door picked in the room
+     */
+    public void setIntendedDirection(Point theDirection) {
+        myCurrentQA = new String[2];
+        if (theDirection.equals(Position.RIGHT)) {
+            setDoorQA(myLeftRightDoors[myPosition.x][myPosition.y + 1]);
+        } else if (theDirection.equals((Position.DOWN))) {
+            setDoorQA(myUpDownDoors[myPosition.x + 1][myPosition.y]);
+        } else if (theDirection.equals(Position.LEFT)) {
+            setDoorQA(myLeftRightDoors[myPosition.x][myPosition.y]);
+        } else if (theDirection.equals(Position.UP)) {
+            setDoorQA(myUpDownDoors[myPosition.x][myPosition.y]);
+        } else {
+            throw new IllegalArgumentException("Invalid Direction");
         }
     }
-    public static boolean atFinish(final int theRow, final int theCol) {
-        return theRow == SIZE - 1 && theCol == SIZE - 1;
+
+    public static boolean isThereWayOut(String theMaze) {
+        return mazeSolver.solver(theMaze);
     }
-    public static boolean canFinishMaze(final Maze theMaze, final int theRow, final int theCol) {
-        boolean success = false;
-        if (theMaze.validateSelection(theRow, theCol)) {
-            markVisited(theMaze, theRow, theCol); //drop a bread crumb to track we've been here
-            if (atFinish(theRow, theCol)) {
-                return true;
+    @Override
+    public String toString() {
+        StringBuilder maze = new StringBuilder();
+        StringBuilder leftRightRow = new StringBuilder();
+        StringBuilder upDownRow = new StringBuilder();
+        for(int row = 0; row < SIZE; row++) {
+            for (int col = 0; col < SIZE; col++){
+                upDownRow.append("x").append(myUpDownDoors[row][col].getDoorState());
+                leftRightRow.append(myLeftRightDoors[row][col].getDoorState()).append(" ");
             }
-            //not at exit so need to try other directions
-            success = canFinishMaze(theMaze, theMaze.moveDown(), theCol); //down
-            if (!success) {
-                success = canFinishMaze(theMaze, theRow, theMaze.moveRight()); //right
-            }
-            if(!success) {
-                success = canFinishMaze(theMaze, theMaze.moveUp(), theCol); //up
-            }
-            if(!success) {
-                success = canFinishMaze(theMaze, theRow, theMaze.moveLeft()); //left
-            }
+            maze.append(upDownRow.append("x\n"));
+            maze.append(leftRightRow.append("3\n"));
+            upDownRow = new StringBuilder();
+            leftRightRow = new StringBuilder();
         }
-        return success;
-    }
-    private static void markVisited(final Maze theMaze, final int theRow, final int theCol) {
-        theMaze.myDoors[theRow][theCol].setDoorState(3);
-    }
-    void setMyRow(final int theRow) {
-            myPosRow = theRow;
-    }
-    void setMyCol(final int theCol) {
-            myPosCol = theCol;
-    }
-    public int getMyRow() {
-        return myPosRow;
-    }
-    public int getMyCol() {
-        return myPosCol;
-    }
-    public Door getMyDoor() {
-        return myDoors[myPosRow][myPosCol];
-    }
-    public Door getAnyDoor(final int theRow, final int theCol) {
-        return myDoors[theRow][theCol];
+        maze.replace(maze.length() - 3, maze.length() - 2, "w");
+        return maze.append("x3x3x3x3x3x ").toString();
     }
 }
