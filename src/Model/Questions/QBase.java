@@ -1,7 +1,7 @@
 package Model.Questions;
 
 import GUI.GUIConstants;
-//import org.sqlite.SQLiteDataSource;
+import org.sqlite.SQLiteDataSource;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -15,14 +15,14 @@ public class QBase {
     private static final String Harry = GUIConstants.HARRY_POTTER.substring(0, 5);
 
 
-  //  private static SQLiteDataSource myQuestionSource;
+    private static SQLiteDataSource myQuestionSource;
     private Connection myConnect = null;
     private ResultSet myResSet;
     private boolean myTableCreated = false;
 
     // Constructor
     public QBase() throws SQLException {
-  //      myQuestionSource = new SQLiteDataSource();
+        myQuestionSource = new SQLiteDataSource();
         connectQuestDB();
     }
 
@@ -179,8 +179,8 @@ public class QBase {
     private void connectQuestDB() throws SQLException {
         // Set the URL for the SQLite database connection
         //   myQuestionSource.setUrl("jdbc:sqlite:DB.db");
-//        myQuestionSource.setUrl("jdbc:sqlite:MazeAB.db");
-//        myConnect = myQuestionSource.getConnection();
+        myQuestionSource.setUrl("jdbc:sqlite:MazeAB.db");
+        myConnect = myQuestionSource.getConnection();
     }
 
     private void OneP() throws SQLException {

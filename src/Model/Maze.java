@@ -1,34 +1,61 @@
 package Model;
 
-import GUI.Position;
+import GUI.GUIConstants;
 
 import java.awt.*;
 import java.io.*;
 
 public class Maze implements Serializable {
+    @Serial
     private static final long serialVersionUID = -6432147852365214569L;
-    private static final int SIZE = 5;
 
+    /** The set size for the two arrays. */
+    public static final int SIZE = 5;
+
+    /** All the doors that take the player left and right through the maze */
     public Door[][] myLeftRightDoors;
+
+    /** All the doors that take the player up and down through the maze */
     public Door[][] myUpDownDoors;
 
-    private Point myPosition;
+    /** The current Position of the player */
+    private Position myPosition;
 
-    private Door myPotentialDoor;
+    /** The door the player wants to go through next */
+    private Door mySelectedDoor;
 
+    /** The Doors in a given room */
+    private Door[] myRoom;
+
+    /** The current Q and A attached to the door the player wants to enter */
     private String[] myCurrentQA;
 
+    /** The Theme for the Trivia Questions. */
     private String myTheme;
 
-    public Maze(String tableName) throws Exception {
+    /**
+     * Constructs a Maze Game based off the theme passed in.
+     *
+     * @param tableName the Theme selected for the game.
+     */
+    public Maze(final String tableName) throws Exception {
         myTheme = tableName;
-        myPosition = new Point(0, 0);
+        myRoom = new Door[4];
+        myPosition =  new Position();
         new Door(myTheme);
         myLeftRightDoors = makeMaze(SIZE, SIZE + 1);
         myUpDownDoors = makeMaze(SIZE + 1, SIZE);
+        setRooms();
     }
 
-    private Door[][] makeMaze(int theRow, int theCol) throws Exception {
+    /**
+     * Constructs a structure to hold the doors for the maze
+     *
+     * @param theRow the desired row length.
+     * @param theCol the desired column length.
+     * @return the structure of doors.
+     */
+    private Door[][] makeMaze(final int theRow,final int theCol) throws Exception {
         Door[][] doors = new Door[theRow][theCol];
 
         for (int row = 0; row < theRow; row++) {
@@ -45,6 +72,68 @@ public class Maze implements Serializable {
         return doors;
     }
 
+    /**
+     * Takes the guess, trims any extra space and then compares it
+     * to the answer. Capitalization doesn't affect result.
+     *
+     * @param theGuess the guess from the player.
+     * @return a boolean stating if the answer is correct or not.
+     */
+    public boolean checkAnswer(final String theGuess) {
+        return mySelectedDoor.checkAnswer(theGuess);
+    }
+
+    /** Grabs current Q for the selected door */
+    public String getCurrentQ() {
+        return myCurrentQA[0];
+    }
+
+    /** Grabs current Position for the game */
+    public Position getPosition() {
+        return myPosition;
+    }
+
+    /** Grabs all the doors available in the current room */
+    public Door[] getRoom() {
+        return myRoom;
+    }
+
+    /** Updates the doors available in the newly entered room. */
+    public void setRooms() {
+        int x = myPosition.getModelPosition().x;
+        int y = myPosition.getModelPosition().y;
+        myRoom[Position.LEFT] = myLeftRightDoors[x][y];
+        myRoom[Position.UP] = myUpDownDoors[x][y];
+        myRoom[Position.RIGHT] = myLeftRightDoors[x][y + 1];
+        myRoom[Position.DOWN] = myUpDownDoors[x + 1][y];
+    }
+    public Door getDoorInDirection(final int theDirection) {
+        return myRoom[theDirection];
+    }
+
+    /** Sets up the QA of the selected door and updates intended direction */
+    public void doorSelected(final int theDirection) {
+        mySelectedDoor = myRoom[theDirection];
+        myPosition.setDesiredPosition(theDirection);
+
+        myCurrentQA = new String[2];
+        myCurrentQA[0] = mySelectedDoor.getQuestion();
+        myCurrentQA[1] = mySelectedDoor.getAnswer();
+    }
+
+    /**
+     *  Finds out if there is still a way out of the Maze
+     *
+     * @param theMaze the Maze to be explored.
+     * @return a boolean that states if the game still has a way out or not.
+     */
+    public static boolean isThereWayOut(String theMaze) {
+        return mazeSolver.solver(theMaze);
+    }
+
+    /**
+     * Saves the current state of the game.
+     */
     public void saveGame() {
         try {
             FileOutputStream fileOut =
@@ -53,12 +142,17 @@ public class Maze implements Serializable {
             out.writeObject(this);
             out.close();
             fileOut.close();
-            System.out.printf("Serialized data is saved in file:maze.ser");
         } catch (IOException i) {
             i.printStackTrace();
         }
     }
 
+    /**
+     * loads the last saved state of the game.
+     *
+     * @return the saved Maze Game
+     * @throws Exception if the game to be loaded does exist.
+     */
     public static Maze loadGame() throws Exception {
         Maze m;
         try {
@@ -69,65 +163,23 @@ public class Maze implements Serializable {
             fileIn.close();
         } catch (IOException i) {
             i.printStackTrace();
+            System.exit(1);
             m = new Maze("JAVA");
         } catch (ClassNotFoundException c) {
             System.out.println("class not found");
             c.printStackTrace();
+            System.exit(1);
             m = new Maze("Java");
         }
         return m;
     }
 
-    public void setMyPosition(Point thePosition) {
-        myPosition = thePosition;
-    }
-
     /**
-     * Takes the guess, trims any extra space and then compares it
-     * to the answer. Capitalization doesn't affect result.
+     * An easy to read visual representation of the maze with all its doors states displayed
+     * 3 -> wall , 2 -> locked , 1 -> unlocked , 0 -> not attempted.
      *
-     * @param theGuess the guess from the player.
-     * @return
+     * @return a String representation of the object.
      */
-    public boolean checkAnswer(String theGuess) {
-        return myPotentialDoor.checkAnswer(theGuess);
-    }
-
-    public String getCurrentQ() {
-        return myCurrentQA[0];
-    }
-
-    public Point getMyPosition() {
-        return new Point(myPosition.y * 50 + 365, myPosition.x * 50 + 465);
-    }
-
-    private void setDoorQA(Door theDoor) {
-        myPotentialDoor = theDoor;
-        myCurrentQA[0] = myPotentialDoor.getQuestion();
-        myCurrentQA[1] = myPotentialDoor.getAnswer();
-    }
-
-    /**
-     * Gets current Question and Answer for Door picked in the room
-     */
-    public void setIntendedDirection(Point theDirection) {
-        myCurrentQA = new String[2];
-        if (theDirection.equals(Position.RIGHT)) {
-            setDoorQA(myLeftRightDoors[myPosition.x][myPosition.y + 1]);
-        } else if (theDirection.equals((Position.DOWN))) {
-            setDoorQA(myUpDownDoors[myPosition.x + 1][myPosition.y]);
-        } else if (theDirection.equals(Position.LEFT)) {
-            setDoorQA(myLeftRightDoors[myPosition.x][myPosition.y]);
-        } else if (theDirection.equals(Position.UP)) {
-            setDoorQA(myUpDownDoors[myPosition.x][myPosition.y]);
-        } else {
-            throw new IllegalArgumentException("Invalid Direction");
-        }
-    }
-
-    public static boolean isThereWayOut(String theMaze) {
-        return mazeSolver.solver(theMaze);
-    }
     @Override
     public String toString() {
         StringBuilder maze = new StringBuilder();
@@ -145,5 +197,19 @@ public class Maze implements Serializable {
         }
         maze.replace(maze.length() - 3, maze.length() - 2, "w");
         return maze.append("x3x3x3x3x3x ").toString();
+    }
+    public Door getDoorFromMyRoom(final int theDirection) {
+        return myRoom[theDirection];
+    }
+
+
+    // for tests
+    public void lockDoor(final Door theDoor) {
+        theDoor.setMyDoorState(Door.LOCKED);
+    }
+    //for testing
+    public void setPositionMaze(final Point thePosition) {
+            myPosition = new Position(thePosition);
+
     }
 }

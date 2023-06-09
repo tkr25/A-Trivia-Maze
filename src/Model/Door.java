@@ -77,4 +77,12 @@ public class Door implements Serializable {
         }
         return isCorrect;
     }
+    public void setMyDoorState(final int theState) {
+        if(theState < 4 && theState > -1) {
+            myDoorState = theState;
+        }
+    }
+    public boolean canTravel() {
+        return myDoorState < Door.LOCKED;
+    }
 }
