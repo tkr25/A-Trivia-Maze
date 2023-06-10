@@ -175,8 +175,8 @@ public class Maze implements Serializable {
     }
 
     /**
-     * An easy to read visual representation of the maze with all its doors states displayed
-     * 3 -> wall , 2 -> locked , 1 -> unlocked , 0 -> not attempted.
+     * An easy to read visual representation of the maze with all its doors states
+     * displayed 3 -> wall , 2 -> locked , 1 -> unlocked , 0 -> not attempted.
      *
      * @return a String representation of the object.
      */

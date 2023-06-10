@@ -1,9 +1,23 @@
 package Model;
 
+/**
+ * Maze solver uses a string representation of the state of the maze
+ * and checks if there is a path out of the maze or not.
+ */
+
 public class mazeSolver {
+    /**
+     * main method
+     * @param theArgs theargs
+     */
     public static void main(String theArgs) {
     }
 
+    /**
+     * solver method that uses helper methods to look for a way out
+     * @param theMazeInStringFormat a string representation of the maze.
+     * @return boolean of if the maze is solvable or not.
+     */
     public static boolean solver(String theMazeInStringFormat) {
         int size = 11;
         char[][] maze = new char[size][size];

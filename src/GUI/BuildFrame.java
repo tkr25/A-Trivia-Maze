@@ -75,22 +75,30 @@ public class BuildFrame extends Application implements EventHandler<ActionEvent>
     private void setStartMenu() {
         myStartMenu = new Group();
 
-        GUIConstants.RAIN_IMAGE.setFitWidth(GUIConstants.SCREEN_SIZE.x - GUIConstants.BORDER * 2);
-        GUIConstants.RAIN_IMAGE.setFitHeight(GUIConstants.SCREEN_SIZE.y - GUIConstants.BORDER * 2);
+        GUIConstants.RAIN_IMAGE.setFitWidth(GUIConstants.SCREEN_SIZE.x
+                - GUIConstants.BORDER * 2);
+        GUIConstants.RAIN_IMAGE.setFitHeight(GUIConstants.SCREEN_SIZE.y
+                - GUIConstants.BORDER * 2);
         GUIConstants.RAIN_IMAGE.relocate(GUIConstants.BORDER, GUIConstants.BORDER);
         GUIConstants.RAIN_IMAGE.setOpacity(0.25);
 
         // create title
         Label title = new Label(GUIConstants.TITLE);
         title.setFont(GUIConstants.TITLE_FONT);
-        title.relocate(GUIConstants.TITLE_COORDINATES.x, GUIConstants.TITLE_COORDINATES.y);
+        title.relocate(GUIConstants.TITLE_COORDINATES.x,
+                GUIConstants.TITLE_COORDINATES.y);
 
         // create start menu buttons
-        Button startButton = buttonMaker(GUIConstants.START, GUIConstants.START_COORDINATES);
-        Button loadButton = buttonMaker(GUIConstants.LOAD, GUIConstants.DIFFICULTY_COORDINATES);
-        startButton.setPrefSize(GUIConstants.BUTTON_SIZE.x * 2 + 10, GUIConstants.BUTTON_SIZE.y);
-        Button aboutButton = buttonMaker(GUIConstants.ABOUT, GUIConstants.ABOUT_COORDINATES);
-        Button themeButton = buttonMaker(GUIConstants.THEME, GUIConstants.THEME_COORDINATES);
+        Button startButton = buttonMaker(GUIConstants.START,
+                GUIConstants.START_COORDINATES);
+        Button loadButton = buttonMaker(GUIConstants.LOAD,
+                GUIConstants.DIFFICULTY_COORDINATES);
+        startButton.setPrefSize(GUIConstants.BUTTON_SIZE.x * 2 + 10,
+                GUIConstants.BUTTON_SIZE.y);
+        Button aboutButton = buttonMaker(GUIConstants.ABOUT,
+                GUIConstants.ABOUT_COORDINATES);
+        Button themeButton = buttonMaker(GUIConstants.THEME,
+                GUIConstants.THEME_COORDINATES);
 
         loadButton.setOnAction(theEvent -> {
             try {
@@ -107,15 +115,18 @@ public class BuildFrame extends Application implements EventHandler<ActionEvent>
                 throw new RuntimeException(e);
             }
         });
-        aboutButton.setOnAction(theEvent -> GUIConstants.ABOUT_DESCRIPTION.setVisible(!GUIConstants.ABOUT_DESCRIPTION.isVisible()));
+        aboutButton.setOnAction(theEvent -> GUIConstants.ABOUT_DESCRIPTION.setVisible
+                (!GUIConstants.ABOUT_DESCRIPTION.isVisible()));
         themeButton.setOnAction(theEvent -> setVisibility(myThemePanel));
 
-        myStartMenu.getChildren().addAll(GUIConstants.RAIN_IMAGE, startButton, //difficultyButton,
+        myStartMenu.getChildren().addAll(GUIConstants.RAIN_IMAGE, startButton,
                 loadButton, themeButton, aboutButton, title);
 
         createThemedButtonsPanel();
-        createLabel(myStartMenu, GUIConstants.ABOUT_DESCRIPTION, GUIConstants.ABOUT_LABEL_COORDINATES);
-        Scene scene = new Scene(myStartMenu, GUIConstants.SCREEN_SIZE.x, GUIConstants.SCREEN_SIZE.y, Color.GREY);
+        createLabel(myStartMenu, GUIConstants.ABOUT_DESCRIPTION,
+                GUIConstants.ABOUT_LABEL_COORDINATES);
+        Scene scene = new Scene(myStartMenu, GUIConstants.SCREEN_SIZE.x,
+                GUIConstants.SCREEN_SIZE.y, Color.GREY);
         myStage.setScene(scene);
     }
 
@@ -129,14 +140,16 @@ public class BuildFrame extends Application implements EventHandler<ActionEvent>
 
         // Create you are here marker
         myIAmHereMarker = new Circle(10);
-        myIAmHereMarker.relocate(myPosition.getGUIPosition().x, myPosition.getGUIPosition().y);
+        myIAmHereMarker.relocate(myPosition.getGUIPosition().x,
+                myPosition.getGUIPosition().y);
 
         // Create frame for gameplay
         myGameFrame = new Group();
 
         // Create the room
         Group room = new Group();
-        Rectangle backroundDoor = new Rectangle(0, 0, GUIConstants.ROOM_SIZE.x, GUIConstants.ROOM_SIZE.y);
+        Rectangle backroundDoor = new Rectangle(0, 0, GUIConstants.ROOM_SIZE.x,
+                GUIConstants.ROOM_SIZE.y);
         backroundDoor.setFill(GUIConstants.ROOM_DOORS_IMAGE);
 
         Button doorAButton = doorMaker(GUIConstants.DOOR_A, GUIConstants.DOOR_A_COORDINATES,
@@ -171,8 +184,10 @@ public class BuildFrame extends Application implements EventHandler<ActionEvent>
         Button shortcutButton = buttonMaker(GUIConstants.SHORTCUT, new Point(50, 650));
 
         saveButton.setOnAction(theEvent -> myMaze.saveGame());
-        shortcutButton.setOnAction(theEvent -> GUIConstants.SHORTCUT_DESCRIPTION.setVisible(!GUIConstants.SHORTCUT_DESCRIPTION.isVisible()));
-        rulesButton.setOnAction(theEvent -> GUIConstants.RULES_DESCRIPTION.setVisible(!GUIConstants.RULES_DESCRIPTION.isVisible()));
+        shortcutButton.setOnAction(theEvent -> GUIConstants.SHORTCUT_DESCRIPTION.
+                setVisible(!GUIConstants.SHORTCUT_DESCRIPTION.isVisible()));
+        rulesButton.setOnAction(theEvent -> GUIConstants.RULES_DESCRIPTION.
+                setVisible(!GUIConstants.RULES_DESCRIPTION.isVisible()));
         buttonPanel.getChildren().addAll(bottom, shortcutButton, rulesButton, saveButton);
 
         // Create grid
@@ -187,8 +202,10 @@ public class BuildFrame extends Application implements EventHandler<ActionEvent>
         }
 
         myGameFrame.getChildren().addAll(room, buttonPanel, grid, myIAmHereMarker);
-        createLabel(myGameFrame, GUIConstants.SHORTCUT_DESCRIPTION, GUIConstants.SHORTCUT_LABEL_COORDINATES);
-        createLabel(myGameFrame, GUIConstants.RULES_DESCRIPTION, GUIConstants.RULES_LABEL_COORDINATES);
+        createLabel(myGameFrame, GUIConstants.SHORTCUT_DESCRIPTION,
+                GUIConstants.SHORTCUT_LABEL_COORDINATES);
+        createLabel(myGameFrame, GUIConstants.RULES_DESCRIPTION,
+                GUIConstants.RULES_LABEL_COORDINATES);
 
         Scene scene = new Scene(myGameFrame, GUIConstants.SCREEN_SIZE.x, GUIConstants.SCREEN_SIZE.y);
         myStage.setScene(scene);
@@ -228,7 +245,8 @@ public class BuildFrame extends Application implements EventHandler<ActionEvent>
     private void gameOver(boolean youWon) {
         Group gameOverPanel = new Group();
 
-        Rectangle blur = new Rectangle(0, 0, GUIConstants.SCREEN_SIZE.x, GUIConstants.SCREEN_SIZE.y);
+        Rectangle blur = new Rectangle(0, 0, GUIConstants.SCREEN_SIZE.x,
+                GUIConstants.SCREEN_SIZE.y);
         blur.setOpacity(0.2);
         blur.setFill(Color.WHITE);
         Rectangle scroll = GUIConstants.SCROLL_DIMENTIONS_AND_COORDINATES;
@@ -249,7 +267,8 @@ public class BuildFrame extends Application implements EventHandler<ActionEvent>
     private void makeQuestionPanel() {
         myQuestionPanel = new Group();
 
-        Rectangle blur = new Rectangle(0, 0, GUIConstants.ROOM_SIZE.x, GUIConstants.ROOM_SIZE.y);
+        Rectangle blur = new Rectangle(0, 0, GUIConstants.ROOM_SIZE.x,
+                GUIConstants.ROOM_SIZE.y);
         blur.setOpacity(0.2);
         Rectangle scroll = GUIConstants.SCROLL_DIMENTIONS_AND_COORDINATES;
         scroll.setFill(GUIConstants.SCROLL_IMAGE);
@@ -264,7 +283,8 @@ public class BuildFrame extends Application implements EventHandler<ActionEvent>
         myResponse = new TextField();
         myResponse.relocate(220, 280);
         myResponse.setOnAction(theEvent -> checkAnswer());
-        myQuestionPanel.getChildren().addAll(blur, scroll, myQuestion, myQuestion2, myQuestion3, myResponse);
+        myQuestionPanel.getChildren().addAll(blur, scroll, myQuestion,
+                myQuestion2, myQuestion3, myResponse);
         myQuestionPanel.setVisible(false);
     }
 
@@ -319,9 +339,12 @@ public class BuildFrame extends Application implements EventHandler<ActionEvent>
     private void createThemedButtonsPanel() {
         myThemePanel = new Group();
 
-        Button themeOne = buttonMaker(GUIConstants.JAVA, GUIConstants.THEME_ONE_COORDINATES);
-        Button themeTwo = buttonMaker(GUIConstants.ONE_PIECE, GUIConstants.THEME_TWO_COORDINATES);
-        Button themeThree = buttonMaker(GUIConstants.HARRY_POTTER, GUIConstants.THEME_THREE_COORDINATES);
+        Button themeOne = buttonMaker(GUIConstants.JAVA,
+                GUIConstants.THEME_ONE_COORDINATES);
+        Button themeTwo = buttonMaker(GUIConstants.ONE_PIECE,
+                GUIConstants.THEME_TWO_COORDINATES);
+        Button themeThree = buttonMaker(GUIConstants.HARRY_POTTER,
+                GUIConstants.THEME_THREE_COORDINATES);
 
         themeOne.setOnAction(theEvent -> setButtonSetting(GUIConstants.JAVA));
         themeTwo.setOnAction(theEvent -> setButtonSetting(GUIConstants.ONE_PIECE));
@@ -373,7 +396,8 @@ public class BuildFrame extends Application implements EventHandler<ActionEvent>
     private void changePositions() {
         myPosition.movePosition();
         myMaze.setRooms();
-        myIAmHereMarker.relocate(myPosition.getGUIPosition().x, myPosition.getGUIPosition().y);
+        myIAmHereMarker.relocate(myPosition.getGUIPosition().x,
+                myPosition.getGUIPosition().y);
         if (myPosition.getModelPosition().equals(GUIConstants.WINNING_POSITION)) {
             gameOver(true);
         } else {
@@ -389,10 +413,10 @@ public class BuildFrame extends Application implements EventHandler<ActionEvent>
     private void checkForWalls() {
         Door[] room = myMaze.getRoom();
 
-        boolean isDoorAVisible = isDoorLocked(room[Position.LEFT]);              //.getDoorState() < Door.LOCKED; //myMaze.myLeftRightDoors[modelPos.x][modelPos.y].getDoorState() < 2;
-        boolean isDoorBVisible = isDoorLocked(room[Position.UP]);                              //.getDoorState() < Door.LOCKED;//myMaze.myUpDownDoors[modelPos.x][modelPos.y].getDoorState() < 2;
-        boolean isDoorCVisible = isDoorLocked(room[Position.RIGHT]);                    //.getDoorState() < Door.LOCKED;//myMaze.myLeftRightDoors[modelPos.x][modelPos.y + 1].getDoorState() < 2;
-        boolean isDoorDVisible = isDoorLocked(room[Position.DOWN]);                              //.getDoorState() < Door.LOCKED;//myMaze.myUpDownDoors[modelPos.x + 1][modelPos.y].getDoorState() < 2;
+        boolean isDoorAVisible = isDoorLocked(room[Position.LEFT]);
+        boolean isDoorBVisible = isDoorLocked(room[Position.UP]);
+        boolean isDoorCVisible = isDoorLocked(room[Position.RIGHT]);
+        boolean isDoorDVisible = isDoorLocked(room[Position.DOWN]);
 
         myButtons.get(GUIConstants.DOOR_A).setVisible(isDoorAVisible);
         hideDoorA.setVisible(!isDoorAVisible);
@@ -411,11 +435,3 @@ public class BuildFrame extends Application implements EventHandler<ActionEvent>
     }
 }
 
-//        myPosition.changePositions(theChange);
-//        myMaze.setMyPosition(myPosition.convertPoisition());
-//        myIAmHereMarker.relocate(myPosition.myPosition.x, myPosition.myPosition.y);
-//        if (myPosition.convertPoisition().equals(GUIConstants.WINNING_POSITION)) {
-//            gameOver(true);
-//        } else {
-//            checkForWalls();
-//        }

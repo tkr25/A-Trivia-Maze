@@ -19,17 +19,24 @@ public class GUIConstants {
 
     final static Image LOGO = new Image("file:logo.png");
 
-    final static ImagePattern BRICK_ONLY = new ImagePattern( new Image("file:brick.jpg"));
-    final static ImageView RAIN_IMAGE = new ImageView(new Image("file:83196.jpg"));
-    final static ImagePattern ROOM_DOORS_IMAGE = new ImagePattern(new Image("file:brickWallDoor.jpg"));
+    final static ImagePattern BRICK_ONLY =
+            new ImagePattern( new Image("file:brick.jpg"));
+    final static ImageView RAIN_IMAGE =
+            new ImageView(new Image("file:83196.jpg"));
+    final static ImagePattern ROOM_DOORS_IMAGE =
+            new ImagePattern(new Image("file:brickWallDoor.jpg"));
 
-    final static ImagePattern SCROLL_IMAGE = new ImagePattern(new Image("file:paper.JPG"));
+    final static ImagePattern SCROLL_IMAGE =
+            new ImagePattern(new Image("file:paper.JPG"));
 
-    final static ImagePattern DOOR_A_LOCKED_IMAGE = new ImagePattern(new Image("file:doorAEmpty2.jpg"));
+    final static ImagePattern DOOR_A_LOCKED_IMAGE =
+            new ImagePattern(new Image("file:doorAEmpty2.jpg"));
 
-    final static ImagePattern DOOR_B_LOCKED_IMAGE = new ImagePattern(new Image("file:doorBEmpty.jpg"));
+    final static ImagePattern DOOR_B_LOCKED_IMAGE =
+            new ImagePattern(new Image("file:doorBEmpty.jpg"));
 
-    final static ImagePattern DOOR_C_LOCKED_IMAGE = new ImagePattern(new Image("file:doorCEmpty2.jpg"));
+    final static ImagePattern DOOR_C_LOCKED_IMAGE =
+            new ImagePattern(new Image("file:doorCEmpty2.jpg"));
 
 
     final static int BORDER = 10;
@@ -109,7 +116,8 @@ public class GUIConstants {
 
     final static String DOOR_D = "GO _DOWN?";
 
-    final static Label RULES_DESCRIPTION =  new Label("FIND A PATH BY \n SELECTING DOORS\n " +
+    final static Label RULES_DESCRIPTION =  new Label("FIND A PATH BY \n SELECTING" +
+            " DOORS\n " +
             " AND A QUESTION \n WILL APPEAR.\n" +
             " ANSWER CORRECTLY \n-> DOOR UNLOCKED\n " +
             " ANSWER WRONG \n-> DOOR LOCKED \n EXIT-> BOTTOM RIGHT");
@@ -117,7 +125,8 @@ public class GUIConstants {
     final static Label SHORTCUT_DESCRIPTION =  new Label("ALT + A -> GO LEFT\n" +
             "ALT + B -> GO UP \nALT + C -> GO RIGHT\nALT + D -> GO DOWN");
 
-    final static Label ABOUT_DESCRIPTION =  new Label("  AMAZING MAZE IS A TRIVIA MAZE GAME WHERE\n " +
+    final static Label ABOUT_DESCRIPTION =  new Label("  AMAZING MAZE IS A TRIVIA" +
+            " MAZE GAME WHERE\n " +
             " YOU ARE LOST IN AN ABANDONED BUILDING\n " +
             " THAT HAS A BUNCH DOORS THAT HAVE BEEN CURSED\n " +
             " THE ONLY WAY TO PASS THROUGH ONE IS TO GET THE \n" +
@@ -133,7 +142,8 @@ public class GUIConstants {
     final static ArrayList<String> myDoorButtons =
             new ArrayList<> (Arrays.asList(DOOR_A, DOOR_B, DOOR_C, DOOR_D));
 
-    final static public Rectangle SCROLL_DIMENTIONS_AND_COORDINATES = new Rectangle(100,150, 400,200);
+    final static public Rectangle SCROLL_DIMENTIONS_AND_COORDINATES =
+            new Rectangle(100,150, 400,200);
 
     final static public String JAVA = "Java";
     final static public String ONE_PIECE = "OnePiece";// PIECE";

@@ -238,9 +238,11 @@ public class QBase {
         }
     }
 
-    private void addQuestionAnswer(String tableName, String questionColumn, String answerColumn, String question, String answer) throws SQLException {
+    private void addQuestionAnswer(String tableName, String questionColumn, String answerColumn,
+                                   String question, String answer) throws SQLException {
         // Insert the question and answer into the specified table
-        String query = "INSERT INTO " + tableName + " (" + questionColumn + ", " + answerColumn + ") VALUES (?, ?)";
+        String query = "INSERT INTO " + tableName + " (" + questionColumn +
+                ", " + answerColumn + ") VALUES (?, ?)";
 
         try (PreparedStatement pstmt = myConnect.prepareStatement(query)) {
             pstmt.setString(1, question);
