@@ -96,7 +96,7 @@ public class QBase {
                 addQuestionAnswer(Harry, "question", "answer", "Lord ___ put the lightning bolt scar on Harry'sforehead.\n", "Voldemort\n");
                 addQuestionAnswer(Harry, "question", "answer", "Remus Lupin turns into a ___.\n", "Werewolf\n");
                 addQuestionAnswer(Harry, "question", "answer", "Sirius ___ was James’ friends that escaped the Azkaban, who also turns out to be Harry’s godfather.\n", "Black\n");
-                addQuestionAnswer(Harry, "question", "answer", "Ron Weasley has a fear of ___(insect).\n", "Spider\n");
+                addQuestionAnswer(Harry, "question", "answer", "Ron Weasley has a fear of ___(insect).\n", "Spiders\n");
                 addQuestionAnswer(Harry, "question", "answer", "Hagrid’s pet dragon, Norberta, was a Norwegian ___.\n", "Ridgeback\n");
                 addQuestionAnswer(Harry, "question", "answer", "Harry’s position in the wizarding sport Quidditch was ___.\n", "Seeker\n");
                 addQuestionAnswer(Harry, "question", "answer", "In order to close the Marauder’s Map you say \"Mischief ___.\"\n", "Managed\n");
@@ -107,9 +107,25 @@ public class QBase {
                 addQuestionAnswer(Harry, "question", "answer", "Fluffy was a three headed ___(animal).\n", "Dog\n");
                 addQuestionAnswer(Harry, "question", "answer", "___ was the name of the male house-elf who served the Malfoy family.\n", "Dobby\n");
                 addQuestionAnswer(Harry, "question", "answer", "___ are the creatures that guard Azkaban.\n", "Dementors\n");
-                addQuestionAnswer(Harry, "question", "answer", "Harry Potter had a pet ___(animal).\n", "Owl\n");
+                addQuestionAnswer(Harry, "question", "answer", "Harry Potter had a pet ___.\n", "Owl\n");
                 addQuestionAnswer(Harry, "question", "answer", "The Leaky ___ was a pub.\n", "Cauldron\n");
                 addQuestionAnswer(Harry, "question", "answer", "___ is the name of Ron’s sister.\n", "Ginni\n");
+                addQuestionAnswer(Harry, "question", "answer", "The Hogwarts ___ is the name of the magical train that takes students to Hogwarts.\n", "Express\n");
+                addQuestionAnswer(Harry, "question", "answer", "___ is the name of the magical village near Hogwarts.\n", "Hogsmead\n");
+                addQuestionAnswer(Harry, "question", "answer", "___ is the name of Harry Potter’s pet owl.\n", "Hedwig\n");
+                addQuestionAnswer(Harry, "question", "answer", "___ is the name of Ron Weasley’s rat.\n", "Scabbers\n");
+                addQuestionAnswer(Harry, "question", "answer", "Severus ___ teaches Potions at Hogwarts during most of the series.\n", "Snape\n");
+                addQuestionAnswer(Harry, "question", "answer", "The Daily ___ is the name of the magical newspaper.\n", "Prophet\n");
+                addQuestionAnswer(Harry, "question", "answer", "___ is the name of Hermione’s cat.\n", "Crookshanks\n");
+                addQuestionAnswer(Harry, "question", "answer", "The ___ Lady is a magical guard to the entrance to the Gryffindor common room.\n", "Fat\n");
+                addQuestionAnswer(Harry, "question", "answer", "___ is the name of the magical prison in the Harry Potter world.\n", "Azkaban\n");
+                addQuestionAnswer(Harry, "question", "answer", "Moaning ___ is the name of the ghost who haunts the girls’ bathroom at Hogwarts.\n", "Myrtle\n");
+                addQuestionAnswer(Harry, "question", "answer", "___ is the name of the magical plant that can be used to breathe underwater.\n", "Gillyweed\n");
+                addQuestionAnswer(Harry, "question", "answer", "___ is the name of the magical creature can only be seen by those who have witnessed death?\n", "Thestral\n");
+                addQuestionAnswer(Harry, "question", "answer", "___ is the screaming magical plant that’s used as an antidote to the Basilisk’s venom?\n", "Mandrake\n");
+                addQuestionAnswer(Harry, "question", "answer", "___ is the name of the creature that can change its shape to resemble a person’s worst fear?\n", "Boggart\n");
+                addQuestionAnswer(Harry, "question", "answer", "The ___ Tournament is the name of the annual Quidditch tournament between Hogwarts, Beauxbatons, and Durmstrang?\n", "Triwizard\n");
+
 
 
                 addQuestionAnswer(Java, "question", "answer", "Which component is used to compile, debug and execute the java programs?\n", "JDK\n");
