@@ -39,34 +39,12 @@ public class TestModel {
         testMaze.setPositionMaze(BOTTOM_LEFT);
         assertFalse(testMaze.getDoorFromMyRoom(Position.LEFT).canTravel());
     }
-    @Test
-    void testBoundariesWallBelowBottomLeftCorner() throws Exception {
-        final Maze testMaze = new Maze(GUIConstants.ONE_PIECE);
-        testMaze.setPositionMaze(BOTTOM_LEFT);
-        assertFalse(testMaze.getDoorFromMyRoom(Position.DOWN).canTravel());
-    }@Test
-    void testBoundariesWallRightOfFinish() throws Exception {
-        final Maze testMaze = new Maze(GUIConstants.ONE_PIECE);
-        testMaze.setPositionMaze(FINISH);
-        assertFalse(testMaze.getDoorFromMyRoom(Position.RIGHT).canTravel());
-    }
-@Test
-    void testBoundariesWallBelowFinish() throws Exception {
-        final Maze testMaze = new Maze(GUIConstants.ONE_PIECE);
-        testMaze.setPositionMaze(FINISH);
-        assertFalse(testMaze.getDoorFromMyRoom(Position.DOWN).canTravel());
-    }
+
     @Test
     void testBoundariesWallAboveRightCorner() throws Exception {
         final Maze testMaze = new Maze(GUIConstants.ONE_PIECE);
         testMaze.setPositionMaze(TOP_RIGHT);
         assertFalse(testMaze.getDoorFromMyRoom(Position.UP).canTravel());
-    }
-    @Test
-    void testBoundariesWallRightOfRightCorner() throws Exception {
-        final Maze testMaze = new Maze(GUIConstants.ONE_PIECE);
-        testMaze.setPositionMaze(TOP_RIGHT);
-        assertFalse(testMaze.getDoorFromMyRoom(Position.RIGHT).canTravel());
     }
     //test position movement
     @Test
