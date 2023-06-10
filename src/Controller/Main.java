@@ -1,7 +1,6 @@
 package Controller;
 
 import GUI.BuildFrame;
-import Model.Maze;
 
 public class Main {
 

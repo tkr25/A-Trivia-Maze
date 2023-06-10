@@ -39,7 +39,7 @@ public class GUIConstants {
     final static Font GAME_OVER_FONT = new Font("Bodoni MT Black", 50);
     final static Font TITLE_FONT = new Font("Bodoni MT Black", 70);
 
-    final public static Point GUI_ORGIN =  new Point (365, 465);
+    final public static Point GUI_ORGIN = new Point(new Point (365, 465));
     final static Point DOOR_A_DIMENSIONS = new Point(80,220);
 
     final static Point DOOR_A_COORDINATES = new Point(15,175);

@@ -17,16 +17,11 @@ public class Position implements Serializable {
 
     private Point myPosition;
 
-    private Point myDesiredPos = new Point (365, 465);
+    private Point myDesiredPos = GUIConstants.GUI_ORGIN;
 
 
     public Position() {
-    //    myPosition = GUIConstants.GUI_ORGIN;
-        myPosition = new Point (365, 465);
-    }
-    public Position(final Point thePoint) {
-        //    myPosition = GUIConstants.GUI_ORGIN;
-        myPosition = new Point (thePoint);
+        myPosition = GUIConstants.GUI_ORGIN;
     }
 
 
@@ -59,8 +54,6 @@ public class Position implements Serializable {
     public void setDesiredPosition(int theDirection) {
         myDesiredPos = getDesiredPosition(theDirection);
     }
-
-
 
     /**
      * Accepts a direction and finds the Position that direction would lead too.
@@ -104,12 +97,5 @@ public class Position implements Serializable {
     public Point posToDown() {
         return new Point(myPosition.x, myPosition.y + 50);
     }
-    //for testing
-    public void setPosition(final Point thePosition) {
-            myPosition = thePosition;
-    }
-    //for testing
-    public Point getPosition() {
-        return myPosition;
-    }
+
 }

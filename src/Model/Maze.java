@@ -1,8 +1,5 @@
 package Model;
 
-import GUI.GUIConstants;
-
-import java.awt.*;
 import java.io.*;
 
 public class Maze implements Serializable {
@@ -10,7 +7,7 @@ public class Maze implements Serializable {
     private static final long serialVersionUID = -6432147852365214569L;
 
     /** The set size for the two arrays. */
-    public static final int SIZE = 5;
+    private static final int SIZE = 5;
 
     /** All the doors that take the player left and right through the maze */
     public Door[][] myLeftRightDoors;
@@ -107,9 +104,6 @@ public class Maze implements Serializable {
         myRoom[Position.RIGHT] = myLeftRightDoors[x][y + 1];
         myRoom[Position.DOWN] = myUpDownDoors[x + 1][y];
     }
-    public Door getDoorInDirection(final int theDirection) {
-        return myRoom[theDirection];
-    }
 
     /** Sets up the QA of the selected door and updates intended direction */
     public void doorSelected(final int theDirection) {
@@ -197,19 +191,5 @@ public class Maze implements Serializable {
         }
         maze.replace(maze.length() - 3, maze.length() - 2, "w");
         return maze.append("x3x3x3x3x3x ").toString();
-    }
-    public Door getDoorFromMyRoom(final int theDirection) {
-        return myRoom[theDirection];
-    }
-
-
-    // for tests
-    public void lockDoor(final Door theDoor) {
-        theDoor.setMyDoorState(Door.LOCKED);
-    }
-    //for testing
-    public void setPositionMaze(final Point thePosition) {
-            myPosition = new Position(thePosition);
-
     }
 }
